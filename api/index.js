@@ -34,10 +34,10 @@ app.use(handleMalformedJson); // handle common req errors
 // routes
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
-app.use("/products", productRouter);
-app.use("/carts", cartRouter);
-app.use("/orders", orderRouter);
-app.use("/checkout", checkoutRouter);
+app.use("/api/products", productRouter);
+app.use("/api/carts", cartRouter);
+app.use("/api/orders", orderRouter);
+app.use("/api/checkout", checkoutRouter);
 
 // server status
 app.get("/", (req, res) => {
