@@ -1,96 +1,28 @@
-import React, { useState, useEffect } from 'react'
-import {
-  CardElement,
-  useStripe,
-  useElements
-} from "@stripe/react-stripe-js"
-import api from '../api'
-import Button from './Button'
-import Loader from "./Loader"
-import { CheckCircle, ChevronRight, CreditCard, X } from 'react-feather'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect } from 'react';
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+import api from '../api';
+import Button from './Button';
+import Loader from "./Loader";
+import { X } from 'react-feather';
+import PayPalCheckout from './PayPalCheckout';
+
+const initialPayPalOptions = {
+  clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID,
+  currency: "USD",
+  intent: "capture",
+};
 
 export default function CheckoutForm({onCancel,onSuccess}) {
-  const [succeeded, setSucceeded] = useState(false)
-  const [error, setError] = useState(null)
-  const [processing, setProcessing] = useState('')
-  const [disabled, setDisabled] = useState(true)
-  const [clientSecret, setClientSecret] = useState('')
-  const [orderDetails, setOrderDetails] = useState({})
-  const stripe = useStripe()
-  const elements = useElements()
+  const [orderDetails, setOrderDetails] = useState({});
 
   useEffect(() => {
-    // Create PaymentIntent as soon as the page loads
     (async () => {
-      const resp = await api.proceedCheckout()
-      console.log(resp)
+      const resp = await api.proceedCheckout();
       if (resp.status !== "error") {
-        setClientSecret(resp.clientSecret)
-        setOrderDetails(resp.finalOrder)
+        setOrderDetails(resp.finalOrder);
       }
-    })()
-  }, [])
-
-  const cardStyle = {
-    style: {
-      base: {
-        fontSmoothing: "antialiased",
-        fontSize: "16px",
-        color: "#27272a",
-        "::placeholder": {
-          color: "gray"
-        },
-        "::-ms-clear": {
-          border: "2px solid gray"
-        }
-      },
-      invalid: {
-        color: "#fa755a",
-        iconColor: "#fa755a"
-      }
-    }
-  }
-  const handleChange = async (event) => {
-    // Listen for changes in the CardElement
-    // and display any errors as the customer types their card details
-    setDisabled(event.empty)
-    setError(event.error ? event.error.message : "")
-  }
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setProcessing(true)
-    const payload = await stripe.confirmCardPayment(clientSecret, {
-      payment_method: {
-        card: elements.getElement(CardElement)
-      }
-    })
-    if (payload.error) {
-      setError(`Payment failed ${payload.error.message}`);
-      setProcessing(false)
-    } else {
-      setError(null)
-      setProcessing(false)
-      setSucceeded(true)
-      onSuccess()
-    }
-  }
-
-  if (succeeded) {
-    return (
-      <div className='flex flex-col items-center'>
-        <CheckCircle className='w-20 h-20 text-green-400' />
-        <p className='text-lg font-light my-4'>Order Placed Successfully</p>
-        <Link to="/orders">
-          <Button link>
-            <span>Go to Orders</span>
-            <ChevronRight className='ml-2' />
-          </Button>
-        </Link>
-				<Button secondary onClick={onCancel}>Close</Button>
-      </div>
-    )
-  }
+    })();
+  }, []);
 
   return (
     <div>
@@ -114,27 +46,14 @@ export default function CheckoutForm({onCancel,onSuccess}) {
           </ul>
           : <Loader color="bg-gray-600" />
         }
-
       </section>
-      <form onSubmit={handleSubmit}>
-        <CardElement options={cardStyle} onChange={handleChange} />
-        {/* Show any error that happens when processing the payment */}
-        {error && (
-          <div className="text-red-400 mt-2" role="alert">
-            {error}
-          </div>
-        )}
-        <Button className="w-full mt-6" disabled={processing || disabled || succeeded}>
-          {processing 
-            ? <Loader/>
-            : <>
-              <CreditCard className='mr-2 opacity-70' /> 
-              <span>Make Payment</span>
-            </>
-          }
-        </Button>
-				<Button className="w-full" secondary onClick={onCancel}>Cancel</Button>
-      </form>
+
+      <div className="mt-6">
+        <PayPalScriptProvider options={initialPayPalOptions}>
+          <PayPalCheckout onSuccess={onSuccess} />
+        </PayPalScriptProvider>
+        <Button className="w-full mt-4" secondary onClick={onCancel}>Cancel</Button>
+      </div>
     </div>
   );
 }

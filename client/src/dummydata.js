@@ -74,7 +74,7 @@ export const popularProducts = [
   },
   {
     id:4,
-    image:"https://www.burdastyle.com/pub/media/catalog/product/cache/7bd3727382ce0a860b68816435d76e26/107/BUS-PAT-BURTE-1320516/1170x1470_BS_2016_05_132_front.png",
+    image: "https://images.pexels.com/photos/428338/pexels-photo-428338.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
     name: "Cotton Dress",
     price: 30,
   },

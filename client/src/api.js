@@ -60,25 +60,35 @@ async function createUserCart(products) {
 }
 
 async function getUserCart() {
-  const userID = getUser()._id
-  const resp = await fetch(API_URL+"/carts/"+userID, {
-    headers: {
-      "x-access-token": getAccessToken(),
-    }
-  })
-  const cart = await resp.json()
-  if (cart.products) {
-    cart.products = cart.products.map(product => (
-      {
-        id: product.productID._id,
-        title: product.productID.title,
-        price: product.productID.price,
-        image: product.productID.image,
-        quantity: product.quantity,
-      }
-    ))
+  const user = getUser();
+  if (!user || !user._id) {
+    return { products: [] };
   }
-  return cart
+  const userID = user._id;
+  try {
+    const resp = await fetch(API_URL+"/carts/"+userID, {
+      headers: {
+        "x-access-token": getAccessToken(),
+      }
+    });
+    if (!resp.ok) {
+      return { products: [] };
+    }
+    const cart = await resp.json();
+    if (cart && Array.isArray(cart.products)) {
+      cart.products = cart.products.map(product => ({
+        id: product.productID?._id,
+        title: product.productID?.title,
+        price: product.productID?.price,
+        image: product.productID?.image,
+        quantity: product.quantity,
+      }));
+      return cart;
+    }
+    return { products: [] };
+  } catch (e) {
+    return { products: [] };
+  }
 }
 
 async function addProductsToCart(products) {
@@ -130,9 +140,18 @@ async function fetchUserDetails() {
   const {status, user} = await resp.json()
   if (status == "ok") {
     if (!user.avatarSrc) {
-      user.avatarSrc = `https://avatars.dicebear.com/api/initials/${user.fullname}.svg`
+      user.avatarSrc = `https://api.dicebear.com/7.x/initials/svg?seed=${user.name}.svg`;
     }
-    setUser(user)
+    // fallback: check if avatarSrc is unreachable, set to default
+    const img = new window.Image();
+    img.onerror = function() {
+      user.avatarSrc = '/default-avatar.png'; // You should add this image to your public folder
+      setUser(user);
+    };
+    img.onload = function() {
+      setUser(user);
+    };
+    img.src = user.avatarSrc;
   }
   return {status, user}
 }
@@ -147,8 +166,19 @@ async function fetchProduct(id) {
   return await resp.json()
 }
 
+// async function proceedCheckout() {
+//   const resp = await fetch(API_URL+"/checkout/payment", {
+//     headers: {
+//       "Content-Type": "application/json",
+//       "x-access-token": getAccessToken(),
+//     },
+//   })
+//   return await resp.json()
+// }
+
 async function proceedCheckout() {
-  const resp = await fetch(API_URL+"/checkout/payment", {
+  const resp = await fetch(API_URL+"/payment/create-paypal-order", {
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       "x-access-token": getAccessToken(),

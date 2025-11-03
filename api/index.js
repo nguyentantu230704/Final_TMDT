@@ -10,6 +10,7 @@ const productRouter = require("./routes/product");
 const cartRouter = require("./routes/cart");
 const orderRouter = require("./routes/order");
 const checkoutRouter = require("./routes/checkout");
+const paymentRouter = require("./routes/payment");
 const {
   handleMalformedJson,
   formatCelebrateErrors,
@@ -37,7 +38,8 @@ app.use("/api/users", userRouter);
 app.use("/api/products", productRouter);
 app.use("/api/carts", cartRouter);
 app.use("/api/orders", orderRouter);
-app.use("/api/checkout", checkoutRouter);
+// app.use("/api/checkout", checkoutRouter);
+app.use("/api/payment", paymentRouter);
 
 // server status
 app.get("/", (req, res) => {
