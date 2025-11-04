@@ -1,31 +1,36 @@
 const jwt = require("jsonwebtoken")
 
 const verifyToken = (req, res, next) => {
-	const token = req.headers["x-access-token"] || req.headers["authorization"]
-	
+	let token = req.headers["x-access-token"] || req.headers["authorization"];
 
-	if (token) {
-		jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-			if (err) {
-				return res.status(403).json({
-					status: "error",
-					message: "access token is invalid",
-				})
-			}
-			req.user = user
-			next()
-		})
-	} else {
+	if (!token) {
 		return res.status(401).json({
-			status: "error",
-			message: "access token not found",
-		})
+		status: "error",
+		message: "Access token not found",
+		});
 	}
-}
+
+	// 🔸 Nếu token có tiền tố "Bearer " thì cắt bỏ
+	if (token.startsWith("Bearer ")) {
+		token = token.slice(7, token.length);
+	}
+
+	jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+		if (err) {
+		return res.status(403).json({
+			status: "error",
+			message: "Access token is invalid",
+		});
+		}
+
+		req.user = decoded; // chứa { id, isAdmin, iat, exp }
+		next();
+	});
+};
 
 const verifyAuthorization = (req, res, next) => {
 	verifyToken(req, res, () => {
-		if (req.user.uid === req.params.id || req.user.isAdmin) next()
+		if (req.user.id === req.params.id || req.user.isAdmin) next()
 		else {
 			res.status(403).json({
 				status: "error",

@@ -40,7 +40,8 @@ router.post("/login",
 	if (isValidLogin) {
 		const jwtToken = jwt.sign(
 			{
-				uid: user._id,
+				// uid: user._id,
+				id: user._id,
 				isAdmin: user.isAdmin,
 			}, 
 			process.env.JWT_SECRET,

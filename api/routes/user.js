@@ -39,7 +39,7 @@ router.get("/",
 router.get("/me", verifyToken, async (req, res) => {
 	try {
 		const user = await User.findById(
-			req.user.uid,
+			req.user.id,
 			{ password: 0 },
 		)
 		return res.json({"status": "ok", user})

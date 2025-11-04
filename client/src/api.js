@@ -137,23 +137,32 @@ async function fetchUserDetails() {
       "x-access-token": getAccessToken(),
     }
   })
-  const {status, user} = await resp.json()
-  if (status == "ok") {
+
+  if ( !resp.ok ) {
+    console.warn("Server error", resp.status);
+    return { status: "error", user: null};
+  }
+  const data = await resp.json();
+  const status = data?.status;
+  const user = data?.user;
+
+  if (status === "ok" && user) {
     if (!user.avatarSrc) {
       user.avatarSrc = `https://api.dicebear.com/7.x/initials/svg?seed=${user.name}.svg`;
     }
-    // fallback: check if avatarSrc is unreachable, set to default
+
     const img = new window.Image();
-    img.onerror = function() {
-      user.avatarSrc = '/default-avatar.png'; // You should add this image to your public folder
+    img.onerror = function () {
+      user.avatarSrc = "/default-avatar.png";
       setUser(user);
     };
-    img.onload = function() {
+    img.onload = function () {
       setUser(user);
     };
     img.src = user.avatarSrc;
+  } else {
+    console.warn("fetchUserDetails: user is null or response invalid", data);
   }
-  return {status, user}
 }
 
 async function fetchProducts(category, newArrivals=false) {

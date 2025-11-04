@@ -25,14 +25,14 @@ export default function App() {
   const [cart, cartDispatch] = useReducerWithLocalStorage(cartReducer, initialCartState, "cart")
   
   useEffect(() => {
-    (async () => {
-      const resp = await api.fetchUserDetails()
-      console.log(resp)
-      if (resp.status == "ok") {
-        setUser(resp.user)
-      }
-    })()
-  }, [])
+  (async () => {
+    const resp = await api.fetchUserDetails();
+    console.log("User details:", resp);
+    if (resp && resp.status === "ok") {
+      setUser(resp.user);
+    }
+  })();
+}, []);
 
   useEffect(() => {
     if (!user) return

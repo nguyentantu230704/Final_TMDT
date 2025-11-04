@@ -6,13 +6,15 @@ const Order = require('../models/Order.model');
 const Cart = require('../models/Cart.model');
 
 // Create PayPal order
+
 router.post('/create-paypal-order', verifyToken, async (req, res) => {
     try {
-        const cart = await Cart.findOne({ userId: req.user.id }).populate('products.productID');
-        if (!cart || !cart.products || cart.products.length === 0) {
+         console.log("🟢 JWT user:", req.user);
+        const cart = await Cart.findOne({ userID: req.user.id }).populate('products.productID');
+        if (!cart  || cart.products.length === 0) {
             return res.status(400).json({ message: 'Cart is empty' });
         }
-
+         console.log("🟢 Found cart:", cart);
         const items = cart.products.map(item => ({
             name: item.productID.title,
             price: item.productID.price.toString(),
@@ -47,7 +49,7 @@ router.post('/capture-paypal-payment', verifyToken, async (req, res) => {
         const captureData = await capturePayment(orderID);
 
         // Create order in database
-        const cart = await Cart.findOne({ userId: req.user.id }).populate('products.productID');
+        const cart = await Cart.findOne({ userID: req.user.id }).populate('products.productID');
         const newOrder = new Order({
             userID: req.user.id,
             products: cart.products.map(item => ({
@@ -68,7 +70,7 @@ router.post('/capture-paypal-payment', verifyToken, async (req, res) => {
 
         // Clear cart
         await Cart.findOneAndUpdate(
-            { userId: req.user.id },
+            { userID: req.user.id },
             { $set: { products: [] } }
         );
 
