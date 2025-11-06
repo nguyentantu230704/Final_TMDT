@@ -11,6 +11,7 @@ const cartRouter = require("./routes/cart");
 const orderRouter = require("./routes/order");
 const checkoutRouter = require("./routes/checkout");
 const paymentRouter = require("./routes/payment");
+const vnpayRouter = require("./routes/vnpayRoutes");
 const {
   handleMalformedJson,
   formatCelebrateErrors,
@@ -30,6 +31,7 @@ mongoose
 // global middlewares
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(handleMalformedJson); // handle common req errors
 
 // routes
@@ -40,6 +42,7 @@ app.use("/api/carts", cartRouter);
 app.use("/api/orders", orderRouter);
 // app.use("/api/checkout", checkoutRouter);
 app.use("/api/payment", paymentRouter);
+app.use("/api/vnpay", vnpayRouter);
 
 // server status
 app.get("/", (req, res) => {
