@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Link } from "react-router-dom"
 import { ShoppingBag } from "react-feather"
 
@@ -14,6 +14,24 @@ export default function CartPage() {
 	const [showCheckoutModal, setShowCheckoutModal] = useState(false)
 	const {user} = useContext(UserContext)
 	const {cart, cartDispatch} = useContext(CartContext)
+	const [loading, setLoading] = useState(false);
+
+	// load cart tu server khi login
+	useEffect(() => {
+		if (!user) {
+			return 
+		}
+		(async () => {
+			try {
+				const res = await api.getUserCart();
+				if (res.products) {
+					cartDispatch({ type: "SET_PRODUCTS", payload: res.products })
+				}
+			} catch (error) {
+				console.error('Lỗi load giỏ hàng', error);
+			}
+		})();
+	}, [user]);
 
 	const setProductQuantity = async (id, quantity) => {
 		if (quantity < 1) {
@@ -25,14 +43,41 @@ export default function CartPage() {
 		}
 	}
 
+	// const handleCreateOrder = async () => {
+	// 	const resp = await api.createOrder(cart.products, cart.total, "abc street, abc city, abc state, abc zip")
+	// 	if (resp.status === "ok") {
+	// 		console.log(resp.orderID)
+	// 		api.clearCart()
+	// 		// cartDispatch({type: "CLEAR_CART"})
+	// 	}
+	// }
+
 	const handleCreateOrder = async () => {
-		const resp = await api.createOrder(cart.products, cart.total, "abc street, abc city, abc state, abc zip")
-		if (resp.status === "ok") {
-			console.log(resp.orderID)
-			api.clearCart()
-			// cartDispatch({type: "CLEAR_CART"})
+		if (!user) {
+			alert('Bạn cần đăng nhập để thanh toán')
+			return
 		}
-	}
+		setLoading(true)
+
+		try {
+			const address = "abc street, abc city, abc zip";
+			const res = await api.createOrder(cart.products, cart.amount, cart.address);
+
+			if (res.success) {
+				// clear cuc bo
+				cartDispatch({ type: "CLEAR_CART"})
+				await api.clearCart();
+				alert('Thanh toán thành công')
+			} else {
+				alert('Thanh toán thất bại' + res.message)
+			}
+		} catch (error) {
+			console.error('Lỗi tạo đơn', error);
+			alert('Có lỗi xảy ra khi tạo đơn hàng')
+		} finally {
+			setLoading(false)
+		}
+	};
 
 	if (cart.products.length === 0) {
 		return (
@@ -53,10 +98,14 @@ export default function CartPage() {
 			<PageHeader>Your Shopping Cart</PageHeader>
 			<section className="max-w-6xl mx-auto my-16 relative gap-8 flex flex-col p-4 md:(flex-row items-start)">
 				<section className="flex-1 sm:min-w-md divide-y divide-gray-200 border border-gray-300 rounded shadow">
-					<CartList 
+					{/* <CartList 
 						items={cart.products} 
 						setItemQuantity={(id, qty) => setProductQuantity(id, qty)}
-					/>		
+					/>		 */}
+					<CartList
+						items={cart.products}
+						setItemQuantity={setProductQuantity}
+					/>
 				</section>
 
 				<section className="w-full md:w-auto border border-gray-300 rounded shadow py-4 md:(sticky top-20)">

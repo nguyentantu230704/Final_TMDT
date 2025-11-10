@@ -170,8 +170,11 @@ async function fetchUserDetails() {
       setUser(user);
     };
     img.src = user.avatarSrc;
+
+    return { status: "ok", user };
   } else {
     console.warn("fetchUserDetails: user is null or response invalid", data);
+    return { status: "error", user: null };
   }
 }
 
