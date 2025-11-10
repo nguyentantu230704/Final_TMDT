@@ -53,7 +53,11 @@ export default function CheckoutForm({ onCancel, onSuccess }) {
       </section>
 
       {/* thêm thanh toán vnpay */}
-      <VnpayButton amount={orderDetails.amount} address="" />
+      <VnpayButton
+        amount={orderDetails.amount}
+        address=""
+        onSuccess={onSuccess}
+      />
 
       <div className="mt-6">
         <PayPalScriptProvider options={initialPayPalOptions}>

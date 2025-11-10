@@ -1,12 +1,15 @@
 import React, { useContext, useState } from "react";
 import { UserContext } from "../App.jsx";
 
-const VnpayButton = ({ amount, address }) => {
+const VnpayButton = ({ amount, address, onSuccess }) => {
   const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const handlePayment = async () => {
-    if (!user) {
+    const token = localStorage.getItem("token");
+    if (!token) {
       alert("Bạn cần đăng nhập để thanh toán");
       return;
     }
@@ -14,22 +17,25 @@ const VnpayButton = ({ amount, address }) => {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/vnpay/create_payment_url", {
+      const response = await fetch(`${API_URL}/vnpay/create_payment_url`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`, // nếu backend cần token
+          "x-access-token": token,
         },
-        body: JSON.stringify({ amount, address }),
+        body: JSON.stringify({
+          amount: Number(amount),
+          address,
+        }),
       });
 
       const data = await response.json();
 
-      if (data.success) {
-        // Chuyển hướng sang VNPay
-        window.location.href = data.paymentUrl;
+      if (data.paymentUrl) {
+        window.location.href = data.paymentUrl; // redirect sang VNPay
       } else {
         alert("Không tạo được đường dẫn thanh toán");
+        console.log("VNPay response:", data);
       }
     } catch (error) {
       console.error("Lỗi khi tạo thanh toán:", error);
