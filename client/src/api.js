@@ -91,6 +91,16 @@ async function getUserCart() {
   }
 }
 
+// function setAuthToken ( token ) {
+//   if ( token ) {
+//     localStorage.setItem("token", token);
+//     instance.defaults.headers.common["x-access-token"] = token;
+//   } else {
+//     localStorage.removeItem("token");
+//     delete instance.defaults.headers.common["x-access-token"];
+//   }
+// }
+
 async function addProductsToCart(products) {
   const userID = getUser()._id
   const resp = await fetch(API_URL+"/carts/"+userID, {
@@ -250,4 +260,5 @@ export default {
   createOrder,
   fetchAllOrders,
   fetchOrderDetails,
+  // setAuthToken,
 }

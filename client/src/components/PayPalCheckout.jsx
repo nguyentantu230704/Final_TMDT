@@ -28,7 +28,7 @@ export default function PayPalCheckout({ onSuccess }) {
             }
             const data = await response.json();
             const orderId = data.paypalOrder?.id;
-            if (!orderId) {
+            if (!orderId) {     
                 alert('Không nhận được orderId từ server.');
                 throw new Error('No orderId');
             }
@@ -64,7 +64,7 @@ export default function PayPalCheckout({ onSuccess }) {
             const result = await response.json();
             if (result.status === 'COMPLETED') {
                 onSuccess && onSuccess();
-                navigate('/orders');
+                navigate('/account');
             } else {
                 alert('Thanh toán PayPal chưa hoàn tất.');
             }

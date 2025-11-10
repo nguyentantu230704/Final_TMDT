@@ -72,11 +72,14 @@ const handleReturn = async (req, res) => {
         const orderId = req.query.vnp_txnRef;
 
         const order = await Order.findOne({ orderId });
+        // if ( !order ) {
+        //     return res.status(404).json({
+        //         success: false,
+        //         message: 'Khong tìm thấy đơn hàng.'
+        //     });
+        // }
         if ( !order ) {
-            return res.status(404).json({
-                success: false,
-                message: 'Khong tìm thấy đơn hàng.'
-            });
+            return res.redirect(`http://localhost:3000/orders?payment=notfound&orderId=${orderId}`)
         }
 
         if (result.isSuccess && result.isVerified) {
@@ -90,15 +93,18 @@ const handleReturn = async (req, res) => {
                 userID: order.userID
             }, { $set: { products: [] } });
 
-            res.json({ success: true, message: 'Thanh toán thành công!' });
+            // res.json({ success: true, message: 'Thanh toán thành công!' });
+            res.redirect(`http://localhost:3000/orders?payment=success&orderId=${orderId}`);
         } else {
             order.paymentStatus = 'failed';
             await order.save();
 
-            res.status(400).json({ success: false, message: 'Sai chữ ký hoặc thất bại!' });
+            // res.status(400).json({ success: false, message: 'Sai chữ ký hoặc thất bại!' });
+            return res.redirect(`http://localhost:3000/orders?payment=failed&orderId=${orderId}`);
         }
     } catch (error) {
-        res.status(500).json({ success: false, message: 'Lỗi xử lý VNPay return.' });
+        // res.status(500).json({ success: false, message: 'Lỗi xử lý VNPay return.' });
+        return res.redirect(`http://localhost:3000/orders?payment=error`);
     }
 };
 

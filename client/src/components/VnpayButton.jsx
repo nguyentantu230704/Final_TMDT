@@ -1,10 +1,12 @@
 import React, { useContext, useState } from "react";
 import { UserContext } from "../App.jsx";
+import api from '../api'
+// import { useNavigate } from "react-router-dom";
 
 const VnpayButton = ({ amount, address, onSuccess }) => {
   const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
-
+  // const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
 
   const handlePayment = async () => {
@@ -44,6 +46,20 @@ const VnpayButton = ({ amount, address, onSuccess }) => {
       setLoading(false);
     }
   };
+
+  // React.useEffect(() => {
+  //   const params = new URLSearchParams(window.location.search);
+  //   const payment = params.get("payment");
+  //   const orderId = params.get("orderId");
+
+  //   if (payment === "success") {
+  //     alert('Thanh toán VNPay thành công');
+  //     onSuccess && onSuccess(orderId);
+  //     navigate('/orders');
+  //   } else if (payment === "fail") {
+  //     alert('Thanh toán VNPay thất bại');
+  //   }
+  // }, []);
 
   return (
     <div className="flex justify-center items-center">

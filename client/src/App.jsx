@@ -33,6 +33,18 @@ export default function App() {
     }
   })();
 }, []);
+  // useEffect(() => {
+  //   const token = localStorage.getItem("token");
+  //   if ( token ) {
+  //     api.setAuthToken(token);  // them token vao header
+  //     (async () => {
+  //       const resp = await api.fetchUserDetails();
+  //       if ( resp && resp.status === "ok" ) {
+  //         setUser(resp.user);
+  //       }
+  //     })();
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (!user) return
