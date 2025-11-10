@@ -5,7 +5,8 @@ const Cart = require('../models/Cart.model');
 
 const createPaymentUrl = async ( req, res ) => {
     try {
-        const { amount, address } = req.body;
+        // const { amount, address } = req.body;
+        const { address } = req.body;
         const ipAddr = (req.ip || req.headers['x-forwarded-for'] || '127.0.0.1').replace(/^::ffff:/, '');
         const returnUrl = `${req.protocol}://${req.get('host')}/api/vnpay/return`;
         const userID = req.user.id;
@@ -15,9 +16,9 @@ const createPaymentUrl = async ( req, res ) => {
             return res.status(400).json({ message: 'Giỏ hàng trống' });
         };
 
-        // amount = cart.products.reduce((sum, item) => {
-        //     return sum + item.productID.price * item.quantity;
-        // }, 0);
+        const amount = cart.products.reduce((sum, item) => {
+            return sum + item.productID.price * item.quantity;
+        }, 0);
 
         const orderId = Date.now().toString();
 
@@ -38,6 +39,10 @@ const createPaymentUrl = async ( req, res ) => {
         const paymentUrl = vnpayService.buildPaymentUrl({
             amount: Number(amount),
             orderId: String(orderId),
+            // cartItems: cart.products.map(item => ({
+            //     price: item.productID.price,
+            //     quantity: item.quantity
+            // })),
             orderInfo: String(orderInfo),
             ipAddr,
             returnUrl,

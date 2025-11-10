@@ -1,6 +1,6 @@
 const vnpay = require('../utils/vnpayConfig');
 
-const buildPaymentUrl = ({ amount, orderId, orderInfo, ipAddr, returnUrl, extra = {} }) => {
+const buildPaymentUrl = ({ amount, orderId, orderInfo, ipAddr, returnUrl }) => {
     if (!amount || !orderId || !orderInfo || !ipAddr || !returnUrl) {
         throw new Error('Thieu tham so bat buoc');
     }
