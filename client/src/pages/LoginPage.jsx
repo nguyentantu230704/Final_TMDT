@@ -4,12 +4,13 @@ import { sliderItems } from '@/dummydata'
 import { UserContext, CartContext } from '@/App'
 import LoginForm from "@/ui/LoginForm"
 import api from '@/api'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 export default function LoginPage() {
 	const {cart} = useContext(CartContext)
 	const {setUser} = useContext(UserContext)
 	const navigate = useNavigate()
+	// const location = useLocation()
 
 	const handleLogin = async userData => {
 		const resp = await api.loginUser(userData)
@@ -21,6 +22,14 @@ export default function LoginPage() {
 				})))
 			}
 			setUser(api.getUser())
+
+			// if (location.pathname === "/orders") {
+			// 	navigateq("/")
+			// } else if (cart.productID.length) {
+			// 	navigate("/cart")
+			// } else {
+			// 	navigate("account")
+			// }
 			if (cart.products.length) {
 				navigate("/cart")
 			} else {

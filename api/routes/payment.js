@@ -9,12 +9,11 @@ const Cart = require('../models/Cart.model');
 
 router.post('/create-paypal-order', verifyToken, async (req, res) => {
     try {
-         console.log("🟢 JWT user:", req.user);
         const cart = await Cart.findOne({ userID: req.user.id }).populate('products.productID');
         if (!cart  || cart.products.length === 0) {
             return res.status(400).json({ message: 'Cart is empty' });
         }
-         console.log("🟢 Found cart:", cart);
+
         const items = cart.products.map(item => ({
             name: item.productID.title,
             price: item.productID.price.toString(),

@@ -22,6 +22,11 @@ export const CartContext = createContext()
 
 export default function App() {
   const [user, setUser] = useState(null)
+  // const [user, setUser] = useState(() => {
+  //   const setUser = localStorage.getItem("user");
+  //   return savedUser ? JSON.stringify(savedUser) : null;
+  // });;
+
   const [cart, cartDispatch] = useReducerWithLocalStorage(cartReducer, initialCartState, "cart")
   
   useEffect(() => {

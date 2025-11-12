@@ -15,6 +15,7 @@ import Carousel from "../components/Carousel";
 
 //import mới
 import TawkTo from "../components/TawkTo";
+import SubscribeForm from "../components/SubscribeForm";
 
 export default function HomePage() {
   const { user } = useContext(UserContext);
@@ -74,10 +75,13 @@ export default function HomePage() {
       </Container>
 
       <TawkTo />
-
       <section className="my-20">
-        <Newsletter />
+        <SubscribeForm />
       </section>
+
+      {/* <section className="my-20">
+        <Newsletter />
+      </section> */}
     </main>
   );
 }
