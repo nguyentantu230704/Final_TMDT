@@ -88,6 +88,39 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// Route share
+router.get("/product/:id/share", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Lấy thông tin sản phẩm từ API
+    const product = await Product.findById(req.params.id);
+
+    // Trả HTML có meta OG
+    res.send(`
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta property="og:title" content="${product.title}" />
+        <meta property="og:description" content="${product.description}" />
+        <meta property="og:image" content="${product.image}" />
+        <meta property="og:url" content="https://tmdt-app.vercel.app/products/${id}" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <title>${product.title}</title>
+        <meta http-equiv="refresh" content="0; url=/products/${id}" />
+      </head>
+      <body>
+        Redirecting to product...
+      </body>
+      </html>
+    `);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Product not found");
+  }
+});
+
 const productResponse = {
   productAdded: {
     status: "ok",

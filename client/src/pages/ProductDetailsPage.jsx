@@ -109,7 +109,7 @@ export default function ProductDetailsPage() {
                 <path d="M22 12.07C22 6.48 17.52 2 11.93 2S2 6.48 2 12.07c0 4.86 3.44 8.9 7.94 9.8v-6.94H7.08v-2.86h2.86V9.41c0-2.82 1.68-4.38 4.26-4.38 1.23 0 2.52.22 2.52.22v2.77h-1.42c-1.4 0-1.84.87-1.84 1.76v2.11h3.13l-.5 2.86h-2.63v6.94c4.5-.9 7.94-4.94 7.94-9.8z" />
               </svg>
 
-              <span className="text-white">Share Facebook</span>
+              <span className="text-white">Share on Facebook</span>
             </a>
           </section>
         </div>
