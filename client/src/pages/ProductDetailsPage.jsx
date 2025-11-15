@@ -7,7 +7,8 @@ import Loader from "@/components/Loader";
 import api from "../api";
 import { CartContext, UserContext } from "@/App";
 
-import { Helmet } from "react-helmet";
+//import mới
+import { Helmet } from "react-helmet-async";
 
 export default function ProductDetailsPage() {
   const { user } = useContext(UserContext);
@@ -25,9 +26,6 @@ export default function ProductDetailsPage() {
       setProduct(resp);
     })();
   }, [id]);
-
-  // URL sản phẩm hiện tại
-  const shareUrl = `https://final-tmdt.onrender.com/product/${id}/share`;
 
   const addToCart = async (e, quantity = 1) => {
     if (user) {
@@ -48,8 +46,27 @@ export default function ProductDetailsPage() {
 
   if (!product) return <Loader />;
 
+  const pageUrl = `https://tmdt-app.vercel.app/products/${id}`;
+
   return (
     <>
+      <Helmet>
+        {/* OG meta tags */}
+        <title>{product.title}</title>
+        <meta name="description" content={product.description} />
+
+        {/* Open Graph */}
+        <meta property="og:title" content={product.title} />
+        <meta property="og:description" content={product.description} />
+        <meta property="og:image" content={product.image} />
+        <meta property="og:url" content={pageUrl} />
+        <meta property="og:type" content="product" />
+
+        {/* Share lên zalo */}
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+      </Helmet>
+
       <main className="relative mb-20">
         <div className="grid grid-cols-1 md:grid-cols-2 py-8 px-4">
           <section className="flex items-center max-h-2xl overflow-hidden my-10 sm:mx-0">
@@ -73,15 +90,26 @@ export default function ProductDetailsPage() {
               </Button>
             )}
 
-            {/* Nút share Facebook */}
+            {/* chèn nút share fb dưới đây */}
             <a
               href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-                shareUrl
+                pageUrl
               )}`}
               target="_blank"
               rel="noopener noreferrer"
+              className="inline-flex max-w-xs items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md transition duration-200"
             >
-              Share Facebook
+              {/* Icon Facebook SVG */}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="w-5 h-5"
+              >
+                <path d="M22 12.07C22 6.48 17.52 2 11.93 2S2 6.48 2 12.07c0 4.86 3.44 8.9 7.94 9.8v-6.94H7.08v-2.86h2.86V9.41c0-2.82 1.68-4.38 4.26-4.38 1.23 0 2.52.22 2.52.22v2.77h-1.42c-1.4 0-1.84.87-1.84 1.76v2.11h3.13l-.5 2.86h-2.63v6.94c4.5-.9 7.94-4.94 7.94-9.8z" />
+              </svg>
+
+              <span className="text-white">Share Facebook</span>
             </a>
           </section>
         </div>

@@ -88,53 +88,6 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// phần mới, get meta share, OG
-router.get("/:id/share", async (req, res) => {
-  try {
-    const productID = req.params.id;
-
-    // Tìm sản phẩm theo ID
-    const product = await Product.findById(productID);
-
-    if (!product) {
-      return res.status(404).send("Product not found");
-    }
-
-    // Link FE thực sự người dùng sẽ được chuyển đến
-    const finalURL = `https://your-frontend-domain.com/product/${productID}`;
-
-    // HTML có OG tags
-    const html = `
-      <!DOCTYPE html>
-      <html lang="vi">
-      <head>
-        <meta charset="utf-8" />
-
-        <meta property="og:title" content="${product.title}" />
-        <meta property="og:description" content="${product.description}" />
-        <meta property="og:image" content="${product.image}" />
-        <meta property="og:url" content="${finalURL}" />
-        <meta property="og:type" content="website" />
-
-        <title>${product.title}</title>
-      </head>
-
-      <body>
-        <p>Redirecting...</p>
-        <script>
-          window.location.href = "${finalURL}";
-        </script>
-      </body>
-      </html>
-    `;
-
-    res.send(html);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Unexpected server error");
-  }
-});
-
 const productResponse = {
   productAdded: {
     status: "ok",
