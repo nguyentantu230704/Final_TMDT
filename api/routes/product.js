@@ -89,7 +89,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Route share
-router.get("/product/:id/share", async (req, res) => {
+router.get("/:id/share", async (req, res) => {
   const { id } = req.params;
 
   try {
