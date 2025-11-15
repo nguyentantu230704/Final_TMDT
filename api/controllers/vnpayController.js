@@ -23,7 +23,7 @@ const createPaymentUrl = async ( req, res ) => {
         // const orderId = Date.now().toString();
 
         const newOrder = await Order.create({
-            orderId,
+            // orderId,
             userID,
             amount,
             address,
