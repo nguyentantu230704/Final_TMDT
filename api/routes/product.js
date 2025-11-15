@@ -103,9 +103,9 @@ router.get("/:id/share", async (req, res) => {
 
   try {
     const product = await Product.findById(id);
-
     if (!product) return res.status(404).send("Product not found");
 
+    console.log("DEBUGproduct: ", product);
     // Đảm bảo image là URL đầy đủ
     const imageUrl = product.image.startsWith("http")
       ? product.image
@@ -131,7 +131,7 @@ router.get("/:id/share", async (req, res) => {
         <meta name="twitter:card" content="summary_large_image" />
 
         <!-- Redirect người dùng về SPA -->
-        <meta http-equiv="refresh" content="0; url=/products/${id}" />
+        <meta http-equiv="refresh" content="2; url=/products/${id}" />
       </head>
       <body>
         Redirecting to product...

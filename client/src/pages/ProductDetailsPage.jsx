@@ -8,7 +8,7 @@ import api from "../api";
 import { CartContext, UserContext } from "@/App";
 
 //import mới
-import { Helmet } from "react-helmet-async";
+import { Helmet } from "react-helmet";
 
 export default function ProductDetailsPage() {
   const { user } = useContext(UserContext);
