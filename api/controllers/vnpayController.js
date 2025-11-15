@@ -74,7 +74,7 @@ const handleReturn = async (req, res) => {
 
         if ( !order ) {
             // return res.redirect(`http://localhost:3000/orders?payment=notfound&orderId=${orderId}`)
-            return res.redirect(`${process.env.FE_URL}/orders?payment=notfound`);
+            return res.redirect(`${process.env.FE_URL}/orders`);
         }
 
         if (result.isSuccess && result.isVerified) {
@@ -90,17 +90,17 @@ const handleReturn = async (req, res) => {
 
             // res.json({ success: true, message: 'Thanh toán thành công!' });
             // res.redirect(`http://localhost:3000/orders?payment=success&orderId=${orderId}`);
-            res.redirect(`${process.env.FE_URL}/orders?payment=success`);
+            res.redirect(`${process.env.FE_URL}/orders`);
         } else {
             order.paymentStatus = 'failed';
             await order.save();
 
             // res.status(400).json({ success: false, message: 'Sai chữ ký hoặc thất bại!' });
-            return res.redirect(`${process.env.FE_URL}/orders?payment=failed`);
+            return res.redirect(`${process.env.FE_URL}/orders`);
         }
     } catch (error) {
         // res.status(500).json({ success: false, message: 'Lỗi xử lý VNPay return.' });
-        return res.redirect(`${process.env.FE_URL}/orders?payment=error`);
+        return res.redirect(`${process.env.FE_URL}/orders`);
     }
 };
 
