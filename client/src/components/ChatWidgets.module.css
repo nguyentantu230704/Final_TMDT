@@ -1,0 +1,81 @@
+.chatWidgetsContainer {
+  position: fixed;
+  bottom: 120px;
+  right: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  z-index: 9999;
+  align-items: center;
+}
+
+.chatButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  background-color: #fff;
+  color: #333;
+  font-size: 24px;
+  line-height: 1;
+  padding: 0;
+}
+
+.chatButton:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.chatButton:active {
+  transform: scale(0.95);
+}
+
+/* Facebook button - blue background */
+.chatButton:nth-child(1) {
+  background-color: #0a66c2;
+  color: #fff;
+}
+
+.chatButton:nth-child(1):hover {
+  background-color: #0855a0;
+}
+
+/* Zalo button - blue background */
+.chatButton:nth-child(2) {
+  background-color: #0084ff;
+  color: #fff;
+}
+
+.chatButton:nth-child(2):hover {
+  background-color: #0066cc;
+}
+
+.icon {
+  width: 28px;
+  height: 28px;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .chatWidgetsContainer {
+    bottom: 20px;
+    right: 20px;
+    gap: 12px;
+  }
+
+  .chatButton {
+    width: 48px;
+    height: 48px;
+  }
+
+  .icon {
+    width: 24px;
+    height: 24px;
+  }
+}
