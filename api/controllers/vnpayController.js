@@ -7,7 +7,8 @@ const createPaymentUrl = async ( req, res ) => {
     try {
         const { address } = req.body;
         const ipAddr = (req.ip || req.headers['x-forwarded-for'] || '127.0.0.1').replace(/^::ffff:/, '');
-        const returnUrl = `${req.protocol}://${req.get('host')}/api/vnpay/return`;
+        // const returnUrl = `${req.protocol}://${req.get('host')}/api/vnpay/return`;
+        const returnUrl = `${process.env.BE_URL}/api/vnpay/return`;
         const userID = req.user.id;
         const cart = await Cart.findOne({ userID }).populate('products.productID');
 
@@ -19,7 +20,7 @@ const createPaymentUrl = async ( req, res ) => {
             return sum + item.productID.price * item.quantity;
         }, 0);
 
-        const orderId = Date.now().toString();
+        // const orderId = Date.now().toString();
 
         const newOrder = await Order.create({
             orderId,
@@ -34,7 +35,9 @@ const createPaymentUrl = async ( req, res ) => {
             paymentStatus: "pending",
             paymentMethod: "vnpay",
         });
-        const orderInfo = `Thanh toan don hang ${newOrder.orderId}`;
+        const orderId = newOrder._id.toString();
+        // const orderInfo = `Thanh toan don hang ${newOrder.orderId}`;
+        const orderInfo = `Thanh toan don hang #${orderId.slice(-6)}`;
         const paymentUrl = vnpayService.buildPaymentUrl({
             amount: Number(amount),
             orderId: String(orderId),
@@ -50,7 +53,7 @@ const createPaymentUrl = async ( req, res ) => {
         return res.json({ 
             success: true,
             paymentUrl,
-            orderId: newOrder.orderId,
+            orderId: newOrder._id,
         });
     } catch (error) {
         console.error('VNPay Error', error);
@@ -67,7 +70,7 @@ const handleReturn = async (req, res) => {
         const orderId = req.query.vnp_TxnRef;
 
         // const order = await Order.findOne({ orderId });
-        const order = await Order.findById({ orderId });
+        const order = await Order.findById(orderId);
 
         if ( !order ) {
             // return res.redirect(`http://localhost:3000/orders?payment=notfound&orderId=${orderId}`)
