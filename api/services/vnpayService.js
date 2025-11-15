@@ -1,3 +1,4 @@
+const { order } = require("../models/schema");
 const vnpay = require("../utils/vnpayConfig");
 
 const buildPaymentUrl = ({ amount, orderId, orderInfo, ipAddr, returnUrl }) => {
@@ -16,7 +17,7 @@ const buildPaymentUrl = ({ amount, orderId, orderInfo, ipAddr, returnUrl }) => {
   if (isNaN(amountNumber)) {
     throw new Error("Amount must be a valid number");
   }
-
+  const orderId = order._id.toString();
   const params = {
     vnp_Amount: String(Math.round(amountNumber * 26000)),
     vnp_OrderInfo: String(orderInfo),

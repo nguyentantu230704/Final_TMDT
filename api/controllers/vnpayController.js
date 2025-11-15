@@ -64,9 +64,10 @@ const createPaymentUrl = async ( req, res ) => {
 const handleReturn = async (req, res) => {
     try {
         const result = vnpayService.verifyReturn(req.query);
-        const orderId = req.query.vnp_txnRef;
+        const orderId = req.query.vnp_TxnRef;
 
-        const order = await Order.findOne({ orderId });
+        // const order = await Order.findOne({ orderId });
+        const order = await Order.findById({ orderId });
 
         if ( !order ) {
             // return res.redirect(`http://localhost:3000/orders?payment=notfound&orderId=${orderId}`)
