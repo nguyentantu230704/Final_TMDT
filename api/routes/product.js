@@ -89,25 +89,48 @@ router.get("/:id", async (req, res) => {
 });
 
 // Route share
+// Hàm escape ký tự đặc biệt để chèn vào HTML
+const escapeHtml = (unsafe) =>
+  unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
 router.get("/:id/share", async (req, res) => {
   const { id } = req.params;
 
   try {
-    // Lấy thông tin sản phẩm từ API
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findById(id);
 
-    // Trả HTML có meta OG
+    if (!product) return res.status(404).send("Product not found");
+
+    // Đảm bảo image là URL đầy đủ
+    const imageUrl = product.image.startsWith("http")
+      ? product.image
+      : `https://tmdt-app.vercel.app/${product.image}`;
+
     res.send(`
       <!DOCTYPE html>
       <html lang="en">
       <head>
-        <meta charset="UTF-8">
-        <meta property="og:title" content="${product.title}" />
-        <meta property="og:description" content="${product.description}" />
-        <meta property="og:image" content="${product.image}" />
+        <meta charset="UTF-8" />
+        <title>${escapeHtml(product.title)}</title>
+
+        <!-- Open Graph -->
+        <meta property="og:title" content="${escapeHtml(product.title)}" />
+        <meta property="og:description" content="${escapeHtml(
+          product.description
+        )}" />
+        <meta property="og:image" content="${imageUrl}" />
         <meta property="og:url" content="https://tmdt-app.vercel.app/products/${id}" />
+        <meta property="og:type" content="product" />
+
+        <!-- Twitter card -->
         <meta name="twitter:card" content="summary_large_image" />
-        <title>${product.title}</title>
+
+        <!-- Redirect người dùng về SPA -->
         <meta http-equiv="refresh" content="0; url=/products/${id}" />
       </head>
       <body>
@@ -117,7 +140,7 @@ router.get("/:id/share", async (req, res) => {
     `);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Product not found");
+    res.status(500).send("Internal server error");
   }
 });
 
