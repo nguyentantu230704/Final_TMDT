@@ -5,64 +5,33 @@ export default function PaymentSuccess() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const orderId = searchParams.get("orderId");
-  const token = localStorage.getItem("token");
-
-  const [order, setOrder] = useState(null); // lưu thông tin order
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (orderId) {
-      fetch(`/api/orders/${orderId}`, {
-        headers: {
-          "x-access-token": token, // hoặc "Authorization": `Bearer ${token}`
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          setOrder(data);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error(err);
-          setLoading(false);
-        });
-    }
-  }, [orderId]);
-
-  const handleReturn = (target) => {
-    if (target === "home") navigate("/");
-    else if (target === "shopping") navigate("/products");
-  };
-
-  if (loading) return <p>Đang tải thông tin đơn hàng...</p>;
 
   return (
-    <main>
-      <h1>Thanh toán thành công</h1>
-      <h2>Mã đơn hàng của bạn là: {orderId}</h2>
+    <div className="flex flex-col min-h-[60vh] justify-center items-center text-center p-6">
+      {/* Icon thanh toán thành công */}
+      <div className="mb-6">
+        <svg
+          className="w-24 h-24 text-green-500 mx-auto"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M5 13l4 4L19 7"
+          />
+        </svg>
+      </div>
 
-      {order ? (
-        <div>
-          <p>Khách hàng: {order.customerName}</p>
-          <p>Địa chỉ: {order.address}</p>
-          <p>Tổng tiền: {order.amount}</p>
-          <h3>Danh sách sản phẩm:</h3>
-          <ul>
-            {order.products.map((p) => (
-              <li key={p.productID}>
-                {p.name} x {p.quantity} - {p.price}đ
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : (
-        <p>Không tìm thấy thông tin đơn hàng.</p>
-      )}
-
-      <button onClick={() => handleReturn("home")}>Trở về trang chủ</button>
-      <button onClick={() => handleReturn("shopping")}>
-        Tiếp tục mua sắm?
-      </button>
-    </main>
+      <h1 className="text-3xl font-bold mb-4 text-green-600">
+        Thanh toán thành công!
+      </h1>
+      <p className="text-gray-700 text-lg">
+        Cảm ơn bạn đã mua hàng. Đơn hàng của bạn đã được xử lý thành công.
+      </p>
+    </div>
   );
 }
