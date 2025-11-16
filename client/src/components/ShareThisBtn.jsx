@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-export default function ShareButtons() {
+export default function ShareButtons({ pageUrl }) {
   useEffect(() => {
     // Kiểm tra nếu script chưa tồn tại thì mới tạo
     if (!document.getElementById("sharethis-script")) {
@@ -16,5 +16,7 @@ export default function ShareButtons() {
     }
   }, []);
 
-  return <div className="sharethis-inline-share-buttons"></div>;
+  return (
+    <div data-url={pageUrl} className="sharethis-inline-share-buttons"></div>
+  );
 }

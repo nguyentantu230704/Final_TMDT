@@ -92,7 +92,7 @@ export default function ProductDetailsPage() {
 
               <span className="text-white">Share on Facebook</span>
             </a>
-            <ShareButtons />
+            <ShareButtons pageUrl />
           </section>
         </div>
         <Button
