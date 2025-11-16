@@ -6,6 +6,7 @@ import Button from "@/components/Button";
 import Loader from "@/components/Loader";
 import api from "../api";
 import { CartContext, UserContext } from "@/App";
+import ShareButtons from "@/components/ShareThisBtn";
 
 export default function ProductDetailsPage() {
   const { user } = useContext(UserContext);
@@ -91,7 +92,7 @@ export default function ProductDetailsPage() {
 
               <span className="text-white">Share on Facebook</span>
             </a>
-            <div class="sharethis-inline-share-buttons"></div>
+            <ShareButtons />
           </section>
         </div>
         <Button
