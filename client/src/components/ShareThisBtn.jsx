@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 
 export default function ShareButtons({ pageUrl }) {
-  const url = pageUrl || window.location.href; // fallback URL
   useEffect(() => {
     if (!document.getElementById("sharethis-script")) {
       const script = document.createElement("script");
@@ -16,9 +15,6 @@ export default function ShareButtons({ pageUrl }) {
   }, []);
 
   return (
-    <div
-      className="sharethis-inline-share-buttons"
-      data-url="https://final-tmdt.onrender.com/api/products/6910ac2da4d78ea18cdfb3ba/og"
-    ></div>
+    <div className="sharethis-inline-share-buttons" data-url={pageUrl}></div>
   );
 }
