@@ -91,6 +91,7 @@ export default function ProductDetailsPage() {
 
               <span className="text-white">Share on Facebook</span>
             </a>
+            <div class="sharethis-inline-share-buttons"></div>
           </section>
         </div>
         <Button
