@@ -7,9 +7,6 @@ import Loader from "@/components/Loader";
 import api from "../api";
 import { CartContext, UserContext } from "@/App";
 
-//import mới
-import { Helmet } from "react-helmet";
-
 export default function ProductDetailsPage() {
   const { user } = useContext(UserContext);
   const { cart, cartDispatch } = useContext(CartContext);
@@ -46,27 +43,10 @@ export default function ProductDetailsPage() {
 
   if (!product) return <Loader />;
 
-  const pageUrl = `https://tmdt-app.vercel.app/products/${id}`;
+  const pageUrl = `https://final-tmdt.onrender.com/api/products/${id}/og`;
 
   return (
     <>
-      <Helmet>
-        {/* OG meta tags */}
-        <title>{product.title}</title>
-        <meta name="description" content={product.description} />
-
-        {/* Open Graph */}
-        <meta property="og:title" content={product.title} />
-        <meta property="og:description" content={product.description} />
-        <meta property="og:image" content={product.image} />
-        <meta property="og:url" content={pageUrl} />
-        <meta property="og:type" content="product" />
-
-        {/* Share lên zalo */}
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-      </Helmet>
-
       <main className="relative mb-20">
         <div className="grid grid-cols-1 md:grid-cols-2 py-8 px-4">
           <section className="flex items-center max-h-2xl overflow-hidden my-10 sm:mx-0">
