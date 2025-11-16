@@ -18,7 +18,7 @@ export default function ShareButtons({ pageUrl }) {
   return (
     <div
       className="sharethis-inline-share-buttons"
-      data-url="https://tmdt-app.vercel.app/products/6910ac2da4d78ea18cdfb3bb/og"
+      data-url="https://final-tmdt.onrender.com/api/products/6910ac2da4d78ea18cdfb3ba/og"
     ></div>
   );
 }
