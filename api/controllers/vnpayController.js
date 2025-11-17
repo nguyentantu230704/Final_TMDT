@@ -96,7 +96,7 @@ const handleReturn = async (req, res) => {
 
       // res.json({ success: true, message: 'Thanh toán thành công!' });
       // res.redirect(`http://localhost:3000/orders?payment=success&orderId=${orderId}`);
-      res.redirect(`${process.env.FE_URL}/payment-success`);
+      res.redirect(`${process.env.FE_URL}/payment-success/${orderId}`);
     } else {
       order.paymentStatus = "failed";
       await order.save();

@@ -118,7 +118,11 @@ export default function App() {
               </Route>
 
               {/* thêm route mới */}
-              <Route path="payment-success" element={<PaymentSuccess />} />
+              <Route path="/payment-success" element={<PaymentSuccess />} />
+              <Route
+                path="/payment-success/:orderId"
+                element={<PaymentSuccess />}
+              />
             </Route>
 
             <Route path="*" element={<NotFoundPage />} />
