@@ -8,7 +8,6 @@ import NotFoundPage from "./404Page";
 export default function PaymentSuccess() {
   const { orderId } = useParams();
   const [order, setOrder] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -16,19 +15,12 @@ export default function PaymentSuccess() {
       if (resp?.order) {
         setOrder(resp.order); //setOrder là hàm
       }
-      setLoading(false);
     })();
   }, [orderId]);
-
-  if (loading) {
-    return <div>Đang tải đơn hàng... 1</div>;
-  }
 
   if (!order) {
     return <NotFoundPage />;
   }
-
-  console.log("DEBUG: ", order);
 
   return (
     <div className="flex flex-col justify-start items-center min-h-[60vh] p-6">
