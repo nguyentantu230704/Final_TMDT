@@ -158,7 +158,7 @@ async function fetchUserDetails() {
 
   if (status === "ok" && user) {
     if (!user.avatarSrc) {
-      user.avatarSrc = `https://api.dicebear.com/7.x/initials/svg?seed=${user.name}.svg`;
+      user.avatarSrc = `https://api.dicebear.com/7.x/initials/svg?seed=${user.fullname}.svg`;
     }
 
     const img = new window.Image();
@@ -251,6 +251,35 @@ async function fetchOrderDetails(orderID) {
   return await resp.json();
 }
 
+async function exportUserEmails() {
+  const token = getAccessToken();
+  try {
+    const resp = await fetch(API_URL + "/users/export-emails", {
+      headers: {
+        "x-access-token": token,
+      },
+    });
+
+    
+    if (resp.ok) {
+      const blob = await resp.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'emails.csv';
+      a.click();
+      return { status: "ok" };
+    } else {
+      const error = await resp.text();
+      console.error("Export failed:", error);
+      return { status: "error", message: error };
+    }
+  } catch (err) {
+    console.error("Export error:", err);
+    return { status: "error", message: err.message };
+  }
+}
+
 export default {
   registerUser,
   loginUser,
@@ -269,5 +298,6 @@ export default {
   createOrder,
   fetchAllOrders,
   fetchOrderDetails,
+  exportUserEmails,
   // setAuthToken,
 };

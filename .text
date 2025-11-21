@@ -12,3 +12,37 @@ Số thẻ	9704198526191432198
 Tên chủ thẻ	NGUYEN VAN A
 Ngày phát hành	07/15	
 Mật khẩu OTP	123456
+
+Dùng đoạn code sau trên console để set role admin cho email đang login xong re-login để nhận token mới sau khi set admin(thay đổi chỉ số xxx thành email cần set):
+
+fetch('http://localhost:5000/api/users/make-admin', {
+  method: 'POST', 
+  headers: {'Content-Type': 'application/json'},
+  body: JSON.stringify({email: 'xxx'})
+})
+.then(r => r.json())
+.then(result => {
+  console.log(result.message);
+});
+
+sau đó dùng code này để download CSV export email của user về:
+ở dòng 2, headers nhận token là token chỉ admin mới có, nếu truy cập trực tiếp page mà ko có token gửi cho header sẽ không download được
+
+const token = localStorage.getItem('token');
+fetch('http://localhost:5000/api/users/export-emails', {
+  headers: {'x-access-token': token}         
+})
+.then(r => {
+  if (r.ok) return r.blob();
+  return r.json().then(err => { throw new Error(err.message); });
+})
+.then(blob => {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'emails.csv';
+  a.click();
+  alert('Download successful!');
+})
+.catch(err => {
+  alert(`Error: ${err.message}`);
+});

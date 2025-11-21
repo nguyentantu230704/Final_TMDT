@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^1.1.4",
-    "vite": "^2.7.13",
+    "vite": "^7.2.2",
     "vite-plugin-windicss": "^1.6.3",
     "windicss": "^3.4.3"
   }

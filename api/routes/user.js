@@ -122,6 +122,59 @@ router.get("/stats", verifyAdminAccess, async (req, res) => {
 	}
 })
 
+// Export user emails as CSV - for Admin
+router.get("/export-emails", verifyAdminAccess, async (req, res) => {
+	try {
+		const users = await User.find({}, { email: 1, _id: 0 }).lean()
+
+		if (!users || users.length === 0) {
+			// No content
+			return res.status(204).send()
+		}
+
+		// Build CSV: header + each email on new line
+		const header = 'email'
+		const rows = users.map(u => (u.email || '').replace(/\r?\n/g, ' '))
+		const csv = [header, ...rows].join('\n')
+
+		res.setHeader('Content-Type', 'text/csv; charset=utf-8')
+		res.setHeader('Content-Disposition', 'attachment; filename="emails.csv"')
+		return res.send(csv)
+
+	} catch (err) {
+		console.error(err)
+		return res.status(500).json(userResponse.unexpectedError)
+	}
+})
+
+router.post("/make-admin", async (req, res) => { 
+  try {
+    const { email } = req.body;
+    
+    const result = await User.updateOne(
+      { email: email },
+      { $set: { isAdmin: true } }
+    );
+    
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ 
+        status: "error", 
+        message: "User not found" 
+      });
+    }
+    
+    console.log(`User ${email} is now admin`);
+    res.json({ 
+      status: "ok", 
+      message: `User ${email} is now admin` 
+    });
+    
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ status: "error", message: "Server error" });
+  }
+});
+
 // Get any user - admin only
 router.get("/:id", verifyAdminAccess, async (req, res) => {
 	try {
