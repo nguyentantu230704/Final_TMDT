@@ -1,43 +1,48 @@
-import { createContext, useEffect, useState } from 'react'
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
-import ScrollToTop from "@/ScrollToTop"
+import { createContext, useEffect, useState } from "react";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import ScrollToTop from "@/ScrollToTop";
 
-import HomePage from "@/pages/HomePage"
-import LoginPage from "@/pages/LoginPage"
-import RegisterPage from "@/pages/RegisterPage"
-import NotFoundPage from "@/pages/404Page"
-import ProductsPage from "@/pages/ProductsPage"
-import ProductDetailsPage from "@/pages/ProductDetailsPage"
-import CartPage from "@/pages/CartPage"
-import OrdersPage from "@/pages/OrdersPage"
-import OrderDetailsPage from "@/pages/OrderDetailsPage"
-import AccountPage from "@/pages/AccountPage"
-import api from '@/api'
-import cartReducer, { initialCartState } from '@/reducers/cartReducer'
-import useReducerWithLocalStorage from '@/hooks/useReducerWithLocalStorage'
-import UserLayout from './layouts/UserLayout'
+import HomePage from "@/pages/HomePage";
+import LoginPage from "@/pages/LoginPage";
+import RegisterPage from "@/pages/RegisterPage";
+import NotFoundPage from "@/pages/404Page";
+import ProductsPage from "@/pages/ProductsPage";
+import ProductDetailsPage from "@/pages/ProductDetailsPage";
+import CartPage from "@/pages/CartPage";
+import OrdersPage from "@/pages/OrdersPage";
+import OrderDetailsPage from "@/pages/OrderDetailsPage";
+import AccountPage from "@/pages/AccountPage";
+import api from "@/api";
+import cartReducer, { initialCartState } from "@/reducers/cartReducer";
+import useReducerWithLocalStorage from "@/hooks/useReducerWithLocalStorage";
+import UserLayout from "./layouts/UserLayout";
+import PaymentSuccess from "@/pages/PaymentSuccess";
 
-export const UserContext = createContext()
-export const CartContext = createContext()
+export const UserContext = createContext();
+export const CartContext = createContext();
 
 export default function App() {
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(null);
   // const [user, setUser] = useState(() => {
   //   const setUser = localStorage.getItem("user");
   //   return savedUser ? JSON.stringify(savedUser) : null;
   // });;
 
-  const [cart, cartDispatch] = useReducerWithLocalStorage(cartReducer, initialCartState, "cart")
-  
+  const [cart, cartDispatch] = useReducerWithLocalStorage(
+    cartReducer,
+    initialCartState,
+    "cart"
+  );
+
   useEffect(() => {
-  (async () => {
-    const resp = await api.fetchUserDetails();
-    console.log("User details:", resp);
-    if (resp && resp.status === "ok") {
-      setUser(resp.user);
-    }
-  })();
-}, []);
+    (async () => {
+      const resp = await api.fetchUserDetails();
+      console.log("User details:", resp);
+      if (resp && resp.status === "ok") {
+        setUser(resp.user);
+      }
+    })();
+  }, []);
   // useEffect(() => {
   //   const token = localStorage.getItem("token");
   //   if ( token ) {
@@ -52,46 +57,77 @@ export default function App() {
   // }, []);
 
   useEffect(() => {
-    if (!user) return
+    if (!user) return;
     (async () => {
-      const resp = await api.getUserCart()
-      console.log(resp)
+      const resp = await api.getUserCart();
+      console.log(resp);
       if (resp.products) {
-        cartDispatch({type: "SET_PRODUCTS", payload: resp.products})
+        cartDispatch({ type: "SET_PRODUCTS", payload: resp.products });
       }
-    })()
-  }, [user])
+    })();
+  }, [user]);
 
   return (
-    <BrowserRouter>      
-      <CartContext.Provider value={{cart, cartDispatch}}>
-      <UserContext.Provider value={{user, setUser}}>
-        <ScrollToTop />
-        
-        <Routes>
-          <Route path="/" element={<UserLayout />}>
-            <Route index element={<HomePage />} />
-            <Route path="cart" element={<CartPage />} />
+    <BrowserRouter>
+      <CartContext.Provider value={{ cart, cartDispatch }}>
+        <UserContext.Provider value={{ user, setUser }}>
+          <ScrollToTop />
 
-            <Route path="login" element={user ? <Navigate replace to="/" /> : <LoginPage />} />
-            <Route path="register" element={user ? <Navigate replace to="/" /> : <RegisterPage />} />
-            <Route path="account" element={user ? <AccountPage /> : <Navigate replace to="/login" />} />
+          <Routes>
+            <Route path="/" element={<UserLayout />}>
+              <Route index element={<HomePage />} />
+              <Route path="cart" element={<CartPage />} />
 
-            <Route path="products">
-              <Route index element={<ProductsPage />} />
-              <Route path=":id" element={<ProductDetailsPage />} />
+              <Route
+                path="login"
+                element={user ? <Navigate replace to="/" /> : <LoginPage />}
+              />
+              <Route
+                path="register"
+                element={user ? <Navigate replace to="/" /> : <RegisterPage />}
+              />
+              <Route
+                path="account"
+                element={
+                  user ? <AccountPage /> : <Navigate replace to="/login" />
+                }
+              />
+
+              <Route path="products">
+                <Route index element={<ProductsPage />} />
+                <Route path=":id" element={<ProductDetailsPage />} />
+              </Route>
+
+              <Route path="orders">
+                <Route
+                  index
+                  element={
+                    user ? <OrdersPage /> : <Navigate replace to="/login" />
+                  }
+                />
+                <Route
+                  path=":id"
+                  element={
+                    user ? (
+                      <OrderDetailsPage />
+                    ) : (
+                      <Navigate replace to="/login" />
+                    )
+                  }
+                />
+              </Route>
+
+              {/* thêm route mới */}
+              <Route path="/payment-success" element={<PaymentSuccess />} />
+              <Route
+                path="/payment-success/:orderId"
+                element={<PaymentSuccess />}
+              />
             </Route>
-            
-            <Route path="orders">
-              <Route index element={user ? <OrdersPage /> : <Navigate replace to="/login" />} />
-              <Route path=":id" element={user ? <OrderDetailsPage /> : <Navigate replace to="/login" />} />
-            </Route>
-          </Route>
-            
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
 
-      </UserContext.Provider>
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </UserContext.Provider>
       </CartContext.Provider>
     </BrowserRouter>
   );

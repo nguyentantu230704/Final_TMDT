@@ -77,6 +77,63 @@ router.delete("/:id", verifyAdminAccess, async (req, res) => {
   }
 });
 
+// Route OG SEO
+router.get("/:id/og", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).send("Product not found");
+
+    // Build image URL đầy đủ
+    const imageUrl = product.image?.startsWith("http")
+      ? product.image
+      : `https://final-tmdt.onrender.com/${product.image}`;
+
+    // HTML trả về cho Facebook
+    const html = `
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="utf-8" />
+          <title>${product.title}</title>
+
+          <!-- OG tags -->
+          <meta property="og:title" content="${product.title}" />
+          <meta property="og:description" content="${
+            product.description || product.title
+          }" />
+          <meta property="og:image" content="${imageUrl}" />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+
+          <meta property="og:type" content="product" />
+          <meta property="og:url" content="https://tmdt-app.vercel.app/products/${
+            product._id
+          }" />
+
+          <!-- Twitter -->
+          <meta name="twitter:card" content="summary_large_image" />
+
+          <!-- Required for FB -->
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        </head>
+        <body>
+          <p>Redirecting...</p>
+          <script>
+            window.location.href = "https://tmdt-app.vercel.app/products/${
+              product._id
+            }";
+          </script>
+        </body>
+      </html>
+    `;
+
+    res.send(html);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
+  }
+});
+
 // Get any product - any user
 router.get("/:id", async (req, res) => {
   try {
@@ -85,53 +142,6 @@ router.get("/:id", async (req, res) => {
   } catch (err) {
     console.error(err);
     return res.status(500).json(productResponse.unexpectedError);
-  }
-});
-
-// phần mới, get meta share, OG
-router.get("/:id/share", async (req, res) => {
-  try {
-    const productID = req.params.id;
-
-    // Tìm sản phẩm theo ID
-    const product = await Product.findById(productID);
-
-    if (!product) {
-      return res.status(404).send("Product not found");
-    }
-
-    // Link FE thực sự người dùng sẽ được chuyển đến
-    const finalURL = `https://your-frontend-domain.com/product/${productID}`;
-
-    // HTML có OG tags
-    const html = `
-      <!DOCTYPE html>
-      <html lang="vi">
-      <head>
-        <meta charset="utf-8" />
-
-        <meta property="og:title" content="${product.title}" />
-        <meta property="og:description" content="${product.description}" />
-        <meta property="og:image" content="${product.image}" />
-        <meta property="og:url" content="${finalURL}" />
-        <meta property="og:type" content="website" />
-
-        <title>${product.title}</title>
-      </head>
-
-      <body>
-        <p>Redirecting...</p>
-        <script>
-          window.location.href = "${finalURL}";
-        </script>
-      </body>
-      </html>
-    `;
-
-    res.send(html);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Unexpected server error");
   }
 });
 

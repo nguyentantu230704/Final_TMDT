@@ -6,8 +6,7 @@ import Button from "@/components/Button";
 import Loader from "@/components/Loader";
 import api from "../api";
 import { CartContext, UserContext } from "@/App";
-
-import { Helmet } from "react-helmet";
+import ShareButtons from "@/components/ShareThisBtn";
 
 export default function ProductDetailsPage() {
   const { user } = useContext(UserContext);
@@ -25,9 +24,6 @@ export default function ProductDetailsPage() {
       setProduct(resp);
     })();
   }, [id]);
-
-  // URL sản phẩm hiện tại
-  const shareUrl = `https://final-tmdt.onrender.com/product/${id}/share`;
 
   const addToCart = async (e, quantity = 1) => {
     if (user) {
@@ -47,6 +43,8 @@ export default function ProductDetailsPage() {
   };
 
   if (!product) return <Loader />;
+
+  const pageUrl = `https://final-tmdt.onrender.com/api/products/${id}/og`;
 
   return (
     <>
@@ -73,16 +71,8 @@ export default function ProductDetailsPage() {
               </Button>
             )}
 
-            {/* Nút share Facebook */}
-            <a
-              href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-                shareUrl
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Share Facebook
-            </a>
+            {/* chèn nút share dưới đây */}
+            <ShareButtons pageUrl={pageUrl} />
           </section>
         </div>
         <Button
