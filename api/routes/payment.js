@@ -4,7 +4,7 @@ const { createOrder, capturePayment } = require("../services/paypalService");
 const { verifyToken } = require("../middlewares/verifyAuth");
 const Order = require("../models/Order.model");
 const Cart = require("../models/Cart.model");
-
+const User = require("../models/User.model");
 // Create PayPal order
 
 router.post("/create-paypal-order", verifyToken, async (req, res) => {
@@ -58,6 +58,7 @@ router.post("/capture-paypal-payment", verifyToken, async (req, res) => {
     const cart = await Cart.findOne({ userID: req.user.id }).populate(
       "products.productID"
     );
+    const user = await User.findById(req.user.id);
     const newOrder = new Order({
       userID: req.user.id,
       products: cart.products.map((item) => ({
@@ -66,7 +67,7 @@ router.post("/capture-paypal-payment", verifyToken, async (req, res) => {
         price: item.productID.price,
       })),
       amount: captureData.purchase_units[0].payments.captures[0].amount.value,
-      address: "", // Có thể lấy từ user nếu có UI nhập địa chỉ
+      address: user.address, // Có thể lấy từ user nếu có UI nhập địa chỉ
       payment: {
         method: "PayPal",
         id: captureData.id,
