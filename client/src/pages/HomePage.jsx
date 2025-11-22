@@ -25,7 +25,6 @@ export default function HomePage() {
   useEffect(() => {
     (async () => {
       const resp = await api.fetchProducts("", true);
-      console.log(resp);
       if (resp.status !== "error") {
         setProducts(resp);
       }

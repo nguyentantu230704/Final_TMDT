@@ -260,13 +260,12 @@ async function exportUserEmails() {
       },
     });
 
-    
     if (resp.ok) {
       const blob = await resp.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      a.download = 'emails.csv';
+      a.download = "emails.csv";
       a.click();
       return { status: "ok" };
     } else {
@@ -277,6 +276,32 @@ async function exportUserEmails() {
   } catch (err) {
     console.error("Export error:", err);
     return { status: "error", message: err.message };
+  }
+}
+
+// hàm mới update profile cho user
+async function updateProfile(newFullname, newAddress, password, newPassword) {
+  const token = getAccessToken();
+
+  try {
+    const resp = await fetch(API_URL + "/users/profile", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": token,
+      },
+      body: JSON.stringify({
+        fullname: newFullname,
+        address: newAddress,
+        password: password,
+        newpassword: newPassword,
+      }),
+    });
+
+    const data = await resp.json();
+    return data;
+  } catch (error) {
+    console.log("Không thể update user profile", error.message);
   }
 }
 
@@ -299,5 +324,6 @@ export default {
   fetchAllOrders,
   fetchOrderDetails,
   exportUserEmails,
+  updateProfile,
   // setAuthToken,
 };

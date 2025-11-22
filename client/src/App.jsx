@@ -35,6 +35,11 @@ export default function App() {
   );
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.log("Chưa đăng nhập");
+      return;
+    }
     (async () => {
       const resp = await api.fetchUserDetails();
       console.log("User details:", resp);
@@ -43,6 +48,7 @@ export default function App() {
       }
     })();
   }, []);
+
   // useEffect(() => {
   //   const token = localStorage.getItem("token");
   //   if ( token ) {
@@ -60,7 +66,6 @@ export default function App() {
     if (!user) return;
     (async () => {
       const resp = await api.getUserCart();
-      console.log(resp);
       if (resp.products) {
         cartDispatch({ type: "SET_PRODUCTS", payload: resp.products });
       }
