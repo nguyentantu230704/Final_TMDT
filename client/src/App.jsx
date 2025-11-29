@@ -17,6 +17,7 @@ import cartReducer, { initialCartState } from "@/reducers/cartReducer";
 import useReducerWithLocalStorage from "@/hooks/useReducerWithLocalStorage";
 import UserLayout from "./layouts/UserLayout";
 import PaymentSuccess from "@/pages/PaymentSuccess";
+import AdminRoutes from "./admin/index"; // nếu cần
 
 export const UserContext = createContext();
 export const CartContext = createContext();
@@ -129,6 +130,9 @@ export default function App() {
                 element={<PaymentSuccess />}
               />
             </Route>
+
+            {/* admin */}
+            <Route path="/admin/*" element={<AdminRoutes />} />
 
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
