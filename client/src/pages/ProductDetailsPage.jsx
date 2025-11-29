@@ -27,7 +27,9 @@ export default function ProductDetailsPage() {
 
   const addToCart = async (e, quantity = 1) => {
     if (user) {
-      const resp = await api.addProductsToCart([{ productID: product._id, quantity }]);
+      const resp = await api.addProductsToCart([
+        { productID: product._id, quantity },
+      ]);
       if (resp.status === "ok") {
         cartDispatch({
           type: "ADD_PRODUCTS",
@@ -45,7 +47,7 @@ export default function ProductDetailsPage() {
   if (!product) return <Loader />;
 
   const pageUrl = `https://final-tmdt.onrender.com/api/products/${product._id}/og`;
-
+  // https://final-tmdt.onrender.com/api/products/6910ac2da4d78ea18cdfb3b7/og
   return (
     <>
       <main className="relative mb-20">
@@ -62,7 +64,7 @@ export default function ProductDetailsPage() {
                 <Button link className="sm:max-w-xs text-base">
                   <Check className="mr-2" />
                   <span>Added to Cart</span>
-                </Button> 
+                </Button>
               </Link>
             ) : user ? (
               <Button className="sm:max-w-xs text-base" onClick={addToCart}>
