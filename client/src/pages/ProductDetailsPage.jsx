@@ -47,7 +47,7 @@ export default function ProductDetailsPage() {
 
   if (!product) return <Loader />;
 
-  const pageUrl = `https://final-tmdt.onrender.com/api/products/${product._id}/og`;
+  const pageUrl = `https://tmdt-app.vercel.app/products/${product._id}`;
   // https://final-tmdt.onrender.com/api/products/6910ac2da4d78ea18cdfb3b7/og
   return (
     <main className="relative mb-20">
