@@ -22,6 +22,11 @@ const {
 
 const app = express();
 
+//prerender.io
+app.use(
+  require("prerender-node").set("prerenderToken", "J3FueFk02Bh5ABJIkGJz")
+);
+
 // mongodb
 mongoose.set("strictQuery", false);
 mongoose
@@ -37,10 +42,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(handleMalformedJson); // handle common req errors
-//prerender.io
-app.use(
-  require("prerender-node").set("prerenderToken", "J3FueFk02Bh5ABJIkGJz")
-);
 
 // routes
 app.use("/api/auth", authRouter);
