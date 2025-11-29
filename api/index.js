@@ -55,6 +55,20 @@ app.get("/", (req, res) => {
   res.json({ status: "ok" });
 });
 
+app.get("/robots.txt", (req, res) => {
+  res.type("text/plain");
+  res.send(`
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Facebot
+Allow: /
+
+User-agent: *
+Allow: /
+  `);
+});
+
 // format celebrate paramater validation errors
 app.use(formatCelebrateErrors);
 
