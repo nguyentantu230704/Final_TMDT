@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const path = require("path");
 dotenv.config();
 
 const authRouter = require("./routes/auth");
@@ -58,6 +59,14 @@ app.use("/api/image", imageRouter);
 // server status
 app.get("/", (req, res) => {
   res.json({ status: "ok" });
+});
+
+// ===== Serve React build =====
+app.use(express.static(path.join(__dirname, "../client/dist")));
+
+// SPA fallback
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/dist/index.html"));
 });
 
 // format celebrate paramater validation errors
