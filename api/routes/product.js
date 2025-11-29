@@ -30,6 +30,42 @@ router.get("/", celebrate({ query: productSchema.query }), async (req, res) => {
   }
 });
 
+// ============= MUST BE BEFORE /:id routes =============
+
+// Get product by slug - any user
+router.get("/slug/:slug", async (req, res) => {
+  try {
+    console.log("Fetching product with slug:", req.params.slug);
+    const product = await Product.findOne({ slug: req.params.slug });
+    if (!product) {
+      console.log("Product not found with slug:", req.params.slug);
+      return res.status(404).json(productResponse.productNotFound);
+    }
+    console.log("Found product:", product.title);
+    return res.json(product);
+  } catch (err) {
+    console.error("Error fetching product by slug:", err);
+    return res.status(500).json(productResponse.unexpectedError);
+  }
+});
+
+// Get any product by ID - any user
+router.get("/:id", async (req, res) => {
+  try {
+    console.log("Fetching product with ID:", req.params.id);
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json(productResponse.productNotFound);
+    }
+    return res.json(product);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json(productResponse.unexpectedError);
+  }
+});
+
+// ============= POST/PUT/DELETE/OG ROUTES =============
+
 // Add a new product - admin only
 router.post(
   "/",
@@ -84,9 +120,7 @@ router.get("/:id/og", async (req, res) => {
     if (!product) return res.status(404).send("Product not found");
 
     // Build image URL đầy đủ
-    const imageUrl = product.image?.startsWith("http")
-      ? product.image
-      : `https://final-tmdt.onrender.com/${product.image}`;
+    const imageUrl = product.image;
 
     // HTML trả về cho Facebook
     const html = `
@@ -107,8 +141,9 @@ router.get("/:id/og", async (req, res) => {
 
           <meta property="og:type" content="product" />
           <meta property="og:url" content="https://tmdt-app.vercel.app/products/${
-            product._id
+            product.slug || product._id
           }" />
+
 
           <!-- Twitter -->
           <meta name="twitter:card" content="summary_large_image" />
@@ -120,7 +155,7 @@ router.get("/:id/og", async (req, res) => {
           <p>Redirecting...</p>
           <script>
             window.location.href = "https://tmdt-app.vercel.app/products/${
-              product._id
+              product.slug || product._id
             }";
           </script>
         </body>
@@ -131,17 +166,6 @@ router.get("/:id/og", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send("Server error");
-  }
-});
-
-// Get any product - any user
-router.get("/:id", async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.id);
-    return res.json(product);
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json(productResponse.unexpectedError);
   }
 });
 
@@ -157,6 +181,10 @@ const productResponse = {
   productDeleted: {
     status: "ok",
     message: "product has been deleted",
+  },
+  productNotFound: {
+    status: "error",
+    message: "product not found",
   },
   unexpectedError: {
     status: "error",
