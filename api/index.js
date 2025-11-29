@@ -12,7 +12,7 @@ const orderRouter = require("./routes/order");
 const checkoutRouter = require("./routes/checkout");
 const paymentRouter = require("./routes/payment");
 const vnpayRouter = require("./routes/vnpayRoutes");
-
+const imageRouter = require("./routes/image");
 const userRoutes = require("./routes/user"); //để export email user
 
 const {
@@ -23,7 +23,7 @@ const {
 const app = express();
 
 // mongodb
-mongoose.set('strictQuery', false);
+mongoose.set("strictQuery", false);
 mongoose
   .connect(process.env.MONGO_URI, {
     useUnifiedTopology: true,
@@ -48,6 +48,7 @@ app.use("/api/orders", orderRouter);
 app.use("/api/payment", paymentRouter);
 app.use("/api/vnpay", vnpayRouter);
 // app.use("/api/shipping", ghnRouter);
+app.use("/api/image", imageRouter);
 
 // server status
 app.get("/", (req, res) => {
