@@ -92,7 +92,7 @@ router.get("/:id/og", async (req, res) => {
 
           <meta property="og:type" content="product" />
           <meta property="og:url" content="https://final-tmdt.onrender.com/api/products/${
-            product.slug || product._id
+            product._id
           }" />
 
           <!-- Twitter -->
