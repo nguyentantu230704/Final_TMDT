@@ -68,6 +68,13 @@ User-agent: *
 Allow: /
   `);
 });
+app.use((req, res, next) => {
+  const ua = req.headers["user-agent"] || "";
+  if (ua.includes("facebookexternalhit") || ua.includes("Facebot")) {
+    req.isFacebookBot = true;
+  }
+  next();
+});
 
 // format celebrate paramater validation errors
 app.use(formatCelebrateErrors);
