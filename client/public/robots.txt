@@ -11,4 +11,4 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://tmdt-app.vercel.app/sitemap.xml
+Sitemap: https://tmdt-app.vercel.app//sitemap.xml
