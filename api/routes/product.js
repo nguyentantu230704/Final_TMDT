@@ -88,16 +88,16 @@ router.get("/:id/og", async (req, res) => {
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         </head>
         <body>
-          <p>Redirecting...</p>
-          <script>
-            window.location.href = "https://tmdt-app.vercel.app/products/${
-              product.slug || product._id
-            }";
-          </script>
+
         </body>
       </html>
     `;
-
+    // <p>Redirecting...</p>
+    //       <script>
+    //         window.location.href = "https://tmdt-app.vercel.app/products/${
+    //           product.slug || product._id
+    //         }";
+    //       </script>
     res.send(html);
   } catch (error) {
     console.error(error);
