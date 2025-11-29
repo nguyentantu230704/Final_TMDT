@@ -30,101 +30,6 @@ router.get("/", celebrate({ query: productSchema.query }), async (req, res) => {
   }
 });
 
-// ============= MUST BE BEFORE /:id routes =============
-
-// Get product by slug - any user
-router.get("/slug/:slug", async (req, res) => {
-  try {
-    console.log("Fetching product with slug:", req.params.slug);
-    const product = await Product.findOne({ slug: req.params.slug });
-    if (!product) {
-      console.log("Product not found with slug:", req.params.slug);
-      return res.status(404).json(productResponse.productNotFound);
-    }
-    console.log("Found product:", product.title);
-    return res.json(product);
-  } catch (err) {
-    console.error("Error fetching product by slug:", err);
-    return res.status(500).json(productResponse.unexpectedError);
-  }
-});
-
-// Get any product by ID - any user
-router.get("/:id", async (req, res) => {
-  try {
-    console.log("Fetching product with ID:", req.params.id);
-    const product = await Product.findById(req.params.id);
-    if (!product) {
-      return res.status(404).json(productResponse.productNotFound);
-    }
-    return res.json(product);
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json(productResponse.unexpectedError);
-  }
-});
-
-// Route OG SEO
-router.get("/:id/og", async (req, res) => {
-  console.log("Hit OG route:", req.headers["user-agent"]);
-  try {
-    const product = await Product.findById(req.params.id);
-    if (!product) return res.status(404).send("Product not found");
-
-    // Build image URL đầy đủ
-    const imageUrl = product.image;
-
-    // HTML trả về cho Facebook
-    const html = `
-        <!DOCTYPE html>
-        <html lang="en">
-          <head>
-            <meta charset="utf-8" />
-            <title>${product.title}</title>
-
-            <!-- OG tags -->
-            <meta property="og:title" content="${product.title}" />
-            <meta property="og:description" content="${
-              product.description || product.title
-            }" />
-            <meta property="og:image" content="${imageUrl}" />
-            <meta property="og:image:width" content="1200" />
-            <meta property="og:image:height" content="630" />
-
-            <meta property="og:type" content="product" />
-            <meta property="og:url" content="https://final-tmdt.onrender.com/api/products/${
-              product._id
-            }" />
-
-            <!-- Twitter -->
-            <meta name="twitter:card" content="summary_large_image" />
-
-            <!-- Required for FB -->
-            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          </head>
-          <body>
-              <p>Redirecting...</p>
-
-              <noscript>
-                <meta http-equiv="refresh" content="0; url=https://tmdt-app.vercel.app/products/PRODUCT_SLUG_HERE" />
-              </noscript>
-
-              <script>
-                window.location.href = "https://tmdt-app.vercel.app/products/PRODUCT_SLUG_HERE";
-              </script>
-          </body>
-        </html>
-      `;
-
-    res.status(200).set("Content-Type", "text/html; charset=utf-8").send(html);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Server error");
-  }
-});
-
-// ============= POST/PUT/DELETE/OG ROUTES =============
-
 // Add a new product - admin only
 router.post(
   "/",
@@ -172,6 +77,74 @@ router.delete("/:id", verifyAdminAccess, async (req, res) => {
   }
 });
 
+// Route OG SEO
+router.get("/:id/og", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).send("Product not found");
+
+    // Build image URL đầy đủ
+    const imageUrl = product.image?.startsWith("http")
+      ? product.image
+      : `https://final-tmdt.onrender.com/${product.image}`;
+
+    // HTML trả về cho Facebook
+    const html = `
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="utf-8" />
+          <title>${product.title}</title>
+
+          <!-- OG tags -->
+          <meta property="og:title" content="${product.title}" />
+          <meta property="og:description" content="${
+            product.description || product.title
+          }" />
+          <meta property="og:image" content="${imageUrl}" />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+
+          <meta property="og:type" content="product" />
+          <meta property="og:url" content="https://tmdt-app.vercel.app/products/${
+            product._id
+          }" />
+
+          <!-- Twitter -->
+          <meta name="twitter:card" content="summary_large_image" />
+
+          <!-- Required for FB -->
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        </head>
+        <body>
+          <p>Redirecting...</p>
+          <script>
+            window.location.href = "https://tmdt-app.vercel.app/products/${
+              product._id
+            }";
+          </script>
+        </body>
+      </html>
+    `;
+
+    res.send(html);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
+  }
+});
+
+// Get any product - any user
+router.get("/:id", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    return res.json(product);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json(productResponse.unexpectedError);
+  }
+});
+
 const productResponse = {
   productAdded: {
     status: "ok",
@@ -184,10 +157,6 @@ const productResponse = {
   productDeleted: {
     status: "ok",
     message: "product has been deleted",
-  },
-  productNotFound: {
-    status: "error",
-    message: "product not found",
   },
   unexpectedError: {
     status: "error",
