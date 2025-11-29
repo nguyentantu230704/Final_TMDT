@@ -49,6 +49,15 @@ router.get("/slug/:slug", async (req, res) => {
   }
 });
 
+// Hàm escape ký tự đặc biệt để chèn vào HTML
+const escapeHtml = (unsafe) =>
+  unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
 // Route OG SEO
 router.get("/:id/og", async (req, res) => {
   try {
@@ -64,13 +73,13 @@ router.get("/:id/og", async (req, res) => {
       <html lang="en">
         <head>
           <meta charset="utf-8" />
-          <title>${product.title}</title>
+          <title>${escapeHtml(product.title)}</title>
 
           <!-- OG tags -->
-          <meta property="og:title" content="${product.title}" />
-          <meta property="og:description" content="${
-            product.description || product.title
-          }" />
+          <meta property="og:title" content="${escapeHtml(product.title)}" />
+          <meta property="og:description" content="${escapeHtml(
+            product.description
+          )}" />
           <meta property="og:image" content="${imageUrl}" />
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
