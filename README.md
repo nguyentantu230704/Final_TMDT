@@ -26,7 +26,7 @@ https://user-images.githubusercontent.com/30614282/161916675-86fb41ce-75cf-40f2-
 
 1. Clone this repo
 ```bash
-git clone https://github.com/nimone/Fashion-Store && cd Fashion-Store
+git clone https://github.com/nguyentantu230704/Final_TMDT.git && cd Fashion-Store
 ```
 2. Install project dependecies
 ```bash
