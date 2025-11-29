@@ -64,8 +64,16 @@ export default function ProductDetailsPage() {
                   <span>Added to Cart</span>
                 </Button>
               </Link>
-            ) : (
+            ) : user ? (
               <Button className="sm:max-w-xs text-base" onClick={addToCart}>
+                <ShoppingCart className="opacity-80 mr-4" />
+                <span>Add to Cart</span>
+              </Button>
+            ) : (
+              <Button
+                className="sm:max-w-xs text-base"
+                onClick={() => alert("Vui lòng đăng nhập để mua hàng")}
+              >
                 <ShoppingCart className="opacity-80 mr-4" />
                 <span>Add to Cart</span>
               </Button>
