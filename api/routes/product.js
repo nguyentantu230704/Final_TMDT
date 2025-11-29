@@ -84,9 +84,7 @@ router.get("/:id/og", async (req, res) => {
     if (!product) return res.status(404).send("Product not found");
 
     // Build image URL đầy đủ
-    const imageUrl = product.image?.startsWith("http")
-      ? product.image
-      : `https://final-tmdt.onrender.com/${product.image}`;
+    const imageUrl = product.image;
 
     // HTML trả về cho Facebook
     const html = `
@@ -106,9 +104,9 @@ router.get("/:id/og", async (req, res) => {
           <meta property="og:image:height" content="630" />
 
           <meta property="og:type" content="product" />
-          <meta property="og:url" content="https://tmdt-app.vercel.app/products/${
+          <meta property="og:url" content="https://final-tmdt.onrender.com/api/products/${
             product._id
-          }" />
+          }/og" />
 
           <!-- Twitter -->
           <meta name="twitter:card" content="summary_large_image" />
