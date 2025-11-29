@@ -17,6 +17,7 @@ import cartReducer, { initialCartState } from "@/reducers/cartReducer";
 import useReducerWithLocalStorage from "@/hooks/useReducerWithLocalStorage";
 import UserLayout from "./layouts/UserLayout";
 import PaymentSuccess from "@/pages/PaymentSuccess";
+import AdminRoutes from "./admin/index"; // nếu cần
 
 export const UserContext = createContext();
 export const CartContext = createContext();
@@ -35,6 +36,11 @@ export default function App() {
   );
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.log("Chưa đăng nhập");
+      return;
+    }
     (async () => {
       const resp = await api.fetchUserDetails();
       console.log("User details:", resp);
@@ -43,6 +49,7 @@ export default function App() {
       }
     })();
   }, []);
+
   // useEffect(() => {
   //   const token = localStorage.getItem("token");
   //   if ( token ) {
@@ -60,7 +67,6 @@ export default function App() {
     if (!user) return;
     (async () => {
       const resp = await api.getUserCart();
-      console.log(resp);
       if (resp.products) {
         cartDispatch({ type: "SET_PRODUCTS", payload: resp.products });
       }
@@ -124,6 +130,9 @@ export default function App() {
                 element={<PaymentSuccess />}
               />
             </Route>
+
+            {/* admin */}
+            <Route path="/admin/*" element={<AdminRoutes />} />
 
             <Route path="*" element={<NotFoundPage />} />
           </Routes>

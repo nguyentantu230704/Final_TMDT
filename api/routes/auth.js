@@ -18,10 +18,12 @@ router.post("/register",
 			email, 
 			password: passwordHash 
 		})
+		console.log("User created successfully")
 		res.status(201).json(authResponse.userCreated)
 
 	} catch (err) {
 		console.error(err)
+		console.error("Register error:", err)
 		res.status(500).json(authResponse.unexpectedError)
 	}
 })
@@ -47,7 +49,6 @@ router.post("/login",
 			process.env.JWT_SECRET,
 			{expiresIn: "3d"},
 		)
-
 		return res.json({ 
 			...authResponse.loginSuccess,
 			accessToken: jwtToken,

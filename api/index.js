@@ -12,7 +12,9 @@ const orderRouter = require("./routes/order");
 const checkoutRouter = require("./routes/checkout");
 const paymentRouter = require("./routes/payment");
 const vnpayRouter = require("./routes/vnpayRoutes");
-// const ghnRouter = require("./routes/ghnRoutes");
+
+const userRoutes = require("./routes/user"); //để export email user
+
 const {
   handleMalformedJson,
   formatCelebrateErrors,
@@ -21,6 +23,7 @@ const {
 const app = express();
 
 // mongodb
+mongoose.set('strictQuery', false);
 mongoose
   .connect(process.env.MONGO_URI, {
     useUnifiedTopology: true,

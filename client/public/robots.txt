@@ -1,7 +1,14 @@
+# Cho phép Googlebot truy cập tất cả, trừ thư mục /nogooglebot/
 User-agent: Googlebot
 Disallow: /nogooglebot/
 
+# Cho phép Facebook crawler đọc toàn bộ site
+User-agent: facebookexternalhit
+Allow: /
+
+# Các bot khác
 User-agent: *
 Allow: /
 
-Sitemap: https://tmdt-app.vercel.app//sitemap.xml
+# Sitemap
+Sitemap: https://tmdt-app.vercel.app/sitemap.xml
