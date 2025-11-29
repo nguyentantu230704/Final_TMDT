@@ -24,7 +24,7 @@ const app = express();
 
 //prerender.io
 app.use(
-  require("prerender-node").set("prerenderToken", "J3FueFk02Bh5ABJIkGJz")
+  require("prerender-node").set("prerenderToken", "OKon3AnN5Zqx2CiR3uUv")
 );
 
 // mongodb
