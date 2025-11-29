@@ -12,6 +12,7 @@ const orderRouter = require("./routes/order");
 const checkoutRouter = require("./routes/checkout");
 const paymentRouter = require("./routes/payment");
 const vnpayRouter = require("./routes/vnpayRoutes");
+// const ghnRouter = require("./routes/ghnRoutes");
 const {
   handleMalformedJson,
   formatCelebrateErrors,
@@ -43,6 +44,7 @@ app.use("/api/orders", orderRouter);
 // app.use("/api/checkout", checkoutRouter);
 app.use("/api/payment", paymentRouter);
 app.use("/api/vnpay", vnpayRouter);
+// app.use("/api/shipping", ghnRouter);
 
 // server status
 app.get("/", (req, res) => {

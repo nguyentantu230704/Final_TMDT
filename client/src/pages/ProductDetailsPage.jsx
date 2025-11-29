@@ -17,17 +17,17 @@ export default function ProductDetailsPage() {
 
   useEffect(() => {
     (async () => {
-      const resp = await api.fetchProduct(id);
-      if (resp.status == "error") {
-        return history.replace("/404");
+      const resp = await api.fetchProductBySlug(id);
+      if (resp.status == "error" || !resp._id) {
+        return navigate("/404");
       }
       setProduct(resp);
     })();
-  }, [id]);
+  }, [id, navigate]);
 
   const addToCart = async (e, quantity = 1) => {
     if (user) {
-      const resp = await api.addProductsToCart([{ productID: id, quantity }]);
+      const resp = await api.addProductsToCart([{ productID: product._id, quantity }]);
       if (resp.status === "ok") {
         cartDispatch({
           type: "ADD_PRODUCTS",
@@ -44,7 +44,7 @@ export default function ProductDetailsPage() {
 
   if (!product) return <Loader />;
 
-  const pageUrl = `https://final-tmdt.onrender.com/api/products/${id}/og`;
+  const pageUrl = `https://final-tmdt.onrender.com/api/products/${product._id}/og`;
 
   return (
     <>
@@ -57,12 +57,12 @@ export default function ProductDetailsPage() {
             <h2 className="text-4xl text-gray-800">{product.title}</h2>
             <p className="text-xl">{product.description}</p>
             <span className="text-2xl font-medium">${product.price}</span>
-            {cart.products.some((p) => p.id === id) ? (
+            {cart.products.some((p) => p.id === product._id) ? (
               <Link to="/cart">
                 <Button link className="sm:max-w-xs text-base">
                   <Check className="mr-2" />
                   <span>Added to Cart</span>
-                </Button>
+                </Button> 
               </Link>
             ) : (
               <Button className="sm:max-w-xs text-base" onClick={addToCart}>
