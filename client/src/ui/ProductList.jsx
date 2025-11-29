@@ -13,7 +13,7 @@ export default function ProductList({ products, onAddToCart }) {
 					key={product._id}
 					imgSrc={product.image}
 					price={product.price}
-					link={`/products/${product._id}`}
+					link={`/products/${product.slug || product._id}`}
 					onAddToCart={() => onAddToCart(product)}
 					isInCart={cart.products.some(p => p.id === product._id)}
 				/>					

@@ -186,8 +186,14 @@ async function fetchProducts(category, newArrivals = false) {
   const resp = await fetch(API_URL + "/products?" + query);
   return await resp.json();
 }
+
 async function fetchProduct(id) {
   const resp = await fetch(API_URL + "/products/" + id);
+  return await resp.json();
+}
+
+async function fetchProductBySlug(slug) {
+  const resp = await fetch(API_URL + "/products/slug/" + slug);
   return await resp.json();
 }
 
@@ -313,6 +319,7 @@ export default {
   fetchUserDetails,
   fetchProducts,
   fetchProduct,
+  fetchProductBySlug,
   createUserCart,
   getUserCart,
   addProductsToCart,
