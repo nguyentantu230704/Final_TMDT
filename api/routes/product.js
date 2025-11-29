@@ -71,9 +71,7 @@ router.get("/:id/og", async (req, res) => {
     if (!product) return res.status(404).send("Product not found");
 
     // Build image URL đầy đủ
-    const imageUrl = `https://final-tmdt.onrender.com/api/image/resize?url=${encodeURIComponent(
-      product.image
-    )}`;
+    const imageUrl = product.image;
 
     // HTML trả về cho Facebook
     const html = `
