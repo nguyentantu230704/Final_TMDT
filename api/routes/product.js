@@ -104,16 +104,19 @@ router.get("/:id/og", async (req, res) => {
           </head>
           <body>
               <p>Redirecting...</p>
+
+              <noscript>
+                <meta http-equiv="refresh" content="0; url=https://tmdt-app.vercel.app/products/PRODUCT_SLUG_HERE" />
+              </noscript>
+
               <script>
-              window.location.href = "https://tmdt-app.vercel.app/products/${
-                product.slug || product._id
-              }";
-      </script>
+                window.location.href = "https://tmdt-app.vercel.app/products/PRODUCT_SLUG_HERE";
+              </script>
           </body>
         </html>
       `;
 
-    res.send(html);
+    res.status(200).set("Content-Type", "text/html; charset=utf-8").send(html);
   } catch (error) {
     console.error(error);
     res.status(500).send("Server error");
