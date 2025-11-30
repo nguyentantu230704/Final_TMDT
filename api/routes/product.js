@@ -107,7 +107,7 @@ router.get("/:id/og", async (req, res) => {
       </html>
     `;
 
-    res.send(html);
+    res.status(200).send(html);
   } catch (error) {
     console.error(error);
     res.status(500).send("Server error");

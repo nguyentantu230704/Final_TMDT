@@ -15,6 +15,7 @@ const paymentRouter = require("./routes/payment");
 const vnpayRouter = require("./routes/vnpayRoutes");
 const imageRouter = require("./routes/image");
 const userRoutes = require("./routes/user"); //để export email user
+const prerender = require("./prerender-node");
 
 const {
   handleMalformedJson,
@@ -22,11 +23,6 @@ const {
 } = require("./middlewares/handleError");
 
 const app = express();
-
-//prerender.io
-app.use(
-  require("prerender-node").set("prerenderToken", "OKon3AnN5Zqx2CiR3uUv")
-);
 
 // mongodb
 mongoose.set("strictQuery", false);
@@ -37,6 +33,10 @@ mongoose
   })
   .then(() => console.log("Connected to database"))
   .catch((err) => console.error(err));
+
+//prerender.io
+prerender.set("prerenderToken", "OKon3AnN5Zqx2CiR3uUv");
+app.use(prerender);
 
 // global middlewares
 app.use(cors());
