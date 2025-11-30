@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const { celebrate } = require("celebrate");
-
+const { Parser } = require("json2csv");
 const User = require("../models/User.model");
 const { user: userSchema } = require("../models/schema");
 const {
@@ -11,22 +11,85 @@ const {
 } = require("../middlewares/verifyAuth");
 
 // Get all users - admin only
+// router.get(
+//   "/",
+//   verifyAdminAccess,
+//   celebrate({ query: userSchema.query }),
+//   async (req, res) => {
+//     const query = req.query;
+//     try {
+//       let users;
+//       if (query.new) {
+//         users = await User.find(
+//           { isAdmin: { $ne: true } },
+//           { password: 0 }
+//         )
+//           .sort({ createdAt: -1 })
+//           .limit(5);
+//       } else {
+//         users = await User.find(
+//           { isAdmin: { $ne: true } },
+//           { password: 0 }
+//         );
+//       }
+//       return res.json(users);
+//     } catch (err) {
+//       console.error(err);
+//       return res.status(500).json(userResponse.unexpectedError);
+//     }
+//   }
+// );
+
 router.get(
   "/",
   verifyAdminAccess,
   celebrate({ query: userSchema.query }),
   async (req, res) => {
     const query = req.query;
+
     try {
       let users;
+
+      const filter = { isAdmin: { $ne: true } };
+      const projection = { password: 0, __v: 0 };
+
       if (query.new) {
-        users = await User.find({}, { password: 0 }) // exclude password
+        users = await User.find(filter, projection)
           .sort({ createdAt: -1 })
           .limit(5);
       } else {
-        users = await User.find({}, { password: 0 });
+        users = await User.find(filter, projection);
       }
+
+      if (query.export === "csv") {
+
+        if (!users.length) {
+          return res.status(404).json({
+            success: false,
+            message: "No users found to export",
+          });
+        }
+
+        const fields = [
+          { label: "ID", value: "_id" },
+          { label: "Full Name", value: "fullname" },
+          { label: "Email", value: "email" },
+          { label: "Address", value: "address" },
+          { label: "Created At", value: "createdAt" }
+        ];
+
+        const parser = new Parser({ fields });
+        const csv = parser.parse(users);
+
+        res.header("Content-Type", "text/csv");
+        res.attachment("users.csv");
+
+        return res.send(csv);
+      }
+
+      // ✅ Không có export -> trả JSON như bình thường
       return res.json(users);
+
     } catch (err) {
       console.error(err);
       return res.status(500).json(userResponse.unexpectedError);

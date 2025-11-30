@@ -19,6 +19,7 @@ module.exports = {
 	user: {
 		query: Joi.object().keys({
 			new: Joi.boolean(),
+			export: Joi.string().valid("csv").optional(),
 		}),
 		update: Joi.object().keys({
 			fullname: Joi.string(),
