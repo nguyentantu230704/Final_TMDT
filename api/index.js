@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const path = require("path");
-const prerenderMiddleware = require("prerender-node");
 dotenv.config();
 
 const authRouter = require("./routes/auth");
@@ -34,8 +33,6 @@ mongoose
   .then(() => console.log("Connected to database"))
   .catch((err) => console.error(err));
 
-//prerender.io
-app.use(prerenderMiddleware.set("prerenderToken", "OKon3AnN5Zqx2CiR3uUv"));
 // global middlewares
 app.use(cors());
 app.use(express.json());
