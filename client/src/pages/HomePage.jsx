@@ -73,7 +73,6 @@ export default function HomePage() {
         </Link>
       </Container>
 
-      <TawkTo />
       <section className="my-20">
         <SubscribeForm />
       </section>
