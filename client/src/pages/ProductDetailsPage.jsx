@@ -77,10 +77,16 @@ export default function ProductDetailsPage() {
       </Helmet>
       <div className="grid grid-cols-1 md:grid-cols-2 py-8 px-4">
         <section className="flex items-center max-h-2xl overflow-hidden my-10 sm:mx-0">
-          <img className="object-cover" src={product.image} />
+          <img
+            className="object-cover"
+            src={product.image}
+            alt={product.title}
+            width={400}
+            height={1000}
+          />
         </section>
         <section className="flex flex-col justify-center space-y-6 text-gray-600">
-          <h2 className="text-4xl text-gray-800">{product.title}</h2>
+          <h1 className="text-4xl text-gray-800">{product.title}</h1>
           <p className="text-xl">{product.description}</p>
           <span className="text-2xl font-medium">${product.price}</span>
           {cart.products.some((p) => p.id === product._id) ? (
