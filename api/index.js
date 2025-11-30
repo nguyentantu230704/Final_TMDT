@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const path = require("path");
+const prerenderMiddleware = require("prerender-node");
 dotenv.config();
 
 const authRouter = require("./routes/auth");
@@ -15,7 +16,6 @@ const paymentRouter = require("./routes/payment");
 const vnpayRouter = require("./routes/vnpayRoutes");
 const imageRouter = require("./routes/image");
 const userRoutes = require("./routes/user"); //để export email user
-const prerender = require("./prerender-node");
 
 const {
   handleMalformedJson,
@@ -35,9 +35,7 @@ mongoose
   .catch((err) => console.error(err));
 
 //prerender.io
-prerender.set("prerenderToken", "OKon3AnN5Zqx2CiR3uUv");
-app.use(prerender);
-
+app.use(prerenderMiddleware.set("prerenderToken", "OKon3AnN5Zqx2CiR3uUv"));
 // global middlewares
 app.use(cors());
 app.use(express.json());
