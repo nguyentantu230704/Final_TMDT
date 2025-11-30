@@ -1,72 +1,87 @@
-import React, { useContext, useEffect, useState } from "react"
-import { ChevronDown } from "react-feather"
-import { useLocation } from "react-router-dom"
+import React, { useContext, useEffect, useState } from "react";
+import { ChevronDown } from "react-feather";
+import { useLocation } from "react-router-dom";
 
-import ProductList from "@/ui/ProductList"
-import Container from "@/components/Container"
-import Button from "@/components/Button"
-import DropDown, { Select, Option } from "@/components/DropDown"
-import useClickOutside from "@/hooks/useClickOutside" 
-import api from "../api"
-import { CartContext, UserContext } from "@/App"
+import ProductList from "@/ui/ProductList";
+import Container from "@/components/Container";
+import Button from "@/components/Button";
+import DropDown, { Select, Option } from "@/components/DropDown";
+import useClickOutside from "@/hooks/useClickOutside";
+import api from "../api";
+import { CartContext, UserContext } from "@/App";
+import { Helmet } from "react-helmet-async";
 
 const sortOptions = [
   "popular",
   "new",
   "price: low to high",
   "price: high to low",
-]
+];
 
 export default function ProductsPage() {
-  const {cartDispatch} = useContext(CartContext)
-  const {user} = useContext(UserContext)
-  const query = new URLSearchParams(useLocation().search)
-  const [products, setProducts] = useState([])
-  const [sort, setSort] = useState(0)
-  const [showSortOptions, setShowSortOptions] = useState(false)
-  const dropDownRef = useClickOutside(() => setShowSortOptions(false))
+  const { cartDispatch } = useContext(CartContext);
+  const { user } = useContext(UserContext);
+  const query = new URLSearchParams(useLocation().search);
+  const [products, setProducts] = useState([]);
+  const [sort, setSort] = useState(0);
+  const [showSortOptions, setShowSortOptions] = useState(false);
+  const dropDownRef = useClickOutside(() => setShowSortOptions(false));
 
-  const category = query.get("category")
+  const category = query.get("category");
 
   useEffect(() => {
     (async () => {
-      const resp = await api.fetchProducts(category)
+      const resp = await api.fetchProducts(category);
       if (resp.status != "error") {
-        setProducts(resp)
+        setProducts(resp);
       }
-    })()
-  }, [category])
+    })();
+  }, [category]);
 
-  useEffect(() => sortProducts(sort), [sort])
+  useEffect(() => sortProducts(sort), [sort]);
 
   const sortProducts = (sortType) => {
     switch (sortType) {
       case 1:
-        setProducts([...products].sort((a, b) => a.updatedAt - b.updatedAt))
-      case 2: 
-        setProducts([...products].sort((a, b) => a.price - b.price))
-        break
+        setProducts([...products].sort((a, b) => a.updatedAt - b.updatedAt));
+      case 2:
+        setProducts([...products].sort((a, b) => a.price - b.price));
+        break;
       case 3:
-        setProducts([...products].sort((a, b) => b.price - a.price))
-        break
+        setProducts([...products].sort((a, b) => b.price - a.price));
+        break;
       default:
-        return
+        return;
     }
-  }
+  };
 
-  const addToCart = async (product, quantity=1) => {
+  const addToCart = async (product, quantity = 1) => {
     if (user) {
-      const resp = await api.addProductsToCart([{productID: product._id, quantity}])
+      const resp = await api.addProductsToCart([
+        { productID: product._id, quantity },
+      ]);
       if (resp.status === "ok") {
-        cartDispatch({type: "ADD_PRODUCTS", payload: [{...product, quantity}]})
+        cartDispatch({
+          type: "ADD_PRODUCTS",
+          payload: [{ ...product, quantity }],
+        });
       }
     } else {
-      cartDispatch({type: "ADD_PRODUCTS", payload: [{...product, quantity}]})
+      cartDispatch({
+        type: "ADD_PRODUCTS",
+        payload: [{ ...product, quantity }],
+      });
     }
-  }
+  };
 
   return (
     <main>
+      <Helmet>
+        <title>Product page</title>
+        <meta name="description" content="this is product page" />
+        <link rel="canonical" href="/products" />
+      </Helmet>
+
       <Container
         heading={`Products${category ? " for: " + category : ""}`}
         type="page"
@@ -82,7 +97,10 @@ export default function ProductsPage() {
             </Button>
 
             {showSortOptions && (
-              <DropDown className="mt-10 inset-x-0" onClick={() => setShowSortOptions(false)}>
+              <DropDown
+                className="mt-10 inset-x-0"
+                onClick={() => setShowSortOptions(false)}
+              >
                 <Select>
                   {sortOptions.map((option, i) => (
                     <Option key={option} onClick={() => setSort(i)}>
@@ -97,5 +115,5 @@ export default function ProductsPage() {
         <ProductList products={products} onAddToCart={addToCart} />
       </Container>
     </main>
-  )
+  );
 }

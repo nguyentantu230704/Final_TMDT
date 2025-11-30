@@ -119,6 +119,8 @@ export default function Footer() {
         </ul>
         <div className="mt-6">
           <img
+            width={232}
+            height={25}
             className="mx-auto md:mx-0"
             src="https://i.ibb.co/Qfvn4z6/payment.png"
             alt="payment providers"

@@ -49,6 +49,71 @@ router.get("/slug/:slug", async (req, res) => {
   }
 });
 
+// Hàm escape ký tự đặc biệt để chèn vào HTML
+const escapeHtml = (unsafe) =>
+  unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
+// Route OG SEO
+router.get("/:id/og", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).send("Product not found");
+
+    // Build image URL đầy đủ
+    const imageUrl = product.image;
+
+    // HTML trả về cho Facebook
+    const html = `
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="utf-8" />
+          <title>${escapeHtml(product.title)}</title>
+
+          <!-- OG tags -->
+          <meta property="og:title" content="${escapeHtml(product.title)}" />
+          <meta property="og:description" content="${escapeHtml(
+            product.description
+          )}" />
+          <meta property="og:image" content="${imageUrl}" />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+
+          <meta property="og:type" content="product" />
+          <meta property="og:url" content="https://tmdt-app.vercel.app/products/${
+            product.slug || product._id
+          }" />
+
+
+          <!-- Twitter -->
+          <meta name="twitter:card" content="summary_large_image" />
+
+          <!-- Required for FB -->
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        </head>
+        <body>
+            <p>Redirecting...</p>
+            <script>
+              window.location.href = "https://tmdt-app.vercel.app/products/${
+                product.slug || product._id
+              }";
+            </script>
+        </body>
+      </html>
+    `;
+
+    res.status(200).send(html);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
+  }
+});
+
 // Get any product by ID - any user
 router.get("/:id", async (req, res) => {
   try {
@@ -61,62 +126,6 @@ router.get("/:id", async (req, res) => {
   } catch (err) {
     console.error(err);
     return res.status(500).json(productResponse.unexpectedError);
-  }
-});
-
-// Route OG SEO
-router.get("/:id/og", async (req, res) => {
-  console.log("Hit OG route:", req.headers["user-agent"]);
-  try {
-    const product = await Product.findById(req.params.id);
-    if (!product) return res.status(404).send("Product not found");
-
-    // Build image URL đầy đủ
-    const imageUrl = product.image;
-
-    // HTML trả về cho Facebook
-    const html = `
-        <!DOCTYPE html>
-        <html lang="en">
-          <head>
-            <meta charset="utf-8" />
-            <title>${product.title}</title>
-
-            <!-- OG tags -->
-            <meta property="og:title" content="${product.title}" />
-            <meta property="og:description" content="${
-              product.description || product.title
-            }" />
-            <meta property="og:image" content="${imageUrl}" />
-            <meta property="og:image:width" content="1200" />
-            <meta property="og:image:height" content="630" />
-
-            <meta property="og:type" content="product" />
-            <meta property="og:url" content="https://final-tmdt.onrender.com/api/products/${
-              product._id
-            }" />
-
-            <!-- Twitter -->
-            <meta name="twitter:card" content="summary_large_image" />
-
-            <!-- Required for FB -->
-            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          </head>
-          <body>
-              <p>Redirecting...</p>
-              <script>
-              window.location.href = "https://tmdt-app.vercel.app/products/${
-                product.slug || product._id
-              }";
-      </script>
-          </body>
-        </html>
-      `;
-
-    res.send(html);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Server error");
   }
 });
 
