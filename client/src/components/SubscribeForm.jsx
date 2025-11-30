@@ -4,7 +4,7 @@ export default function SubscribeForm () {
     return (
         <div className="flex justify-center items-center my-10">
             <form
-                action="https://gmail.us14.list-manage.com/subscribe/post?u=c27e8b8956a4431f37f378827&amp;id=2f4d06a98e&amp;f_id=008b9ce0f0"
+                action="https://app.us4.list-manage.com/subscribe/post?u=4a6932e6a93f46f8d84d03c72&amp;id=e115e39296&amp;f_id=00b684e4f0"
                 method="post"
                 id="mc-embedded-subscribe-form" 
                 // name="mc-embedded-subscribe-form
